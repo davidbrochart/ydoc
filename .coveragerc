@@ -1,0 +1,50 @@
+# Coverage.py configuration for YDoc
+
+[run]
+# Include source code in coverage analysis
+source = src/ydoc
+
+# Omit specific files/patterns from coverage
+omit =
+    */tests/*
+    */__init__.py
+    */setup.py
+    */conftest.py
+
+# Enable branch coverage
+branch = True
+
+# Parallel mode for faster execution
+parallel = True
+
+[report]
+# Show missing line numbers
+show_missing = True
+
+# Sort coverage by missing lines
+sort = -Cover
+
+# Precision for percentages
+precision = 2
+
+# Exclude lines from coverage
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self\.debug:
+    if __name__ == .__main__.:
+    raise NotImplementedError
+    raise AssertionError
+    except ImportError:
+    except Exception:
+
+[html]
+# Directory for HTML report
+directory = htmlcov
+
+# Title for HTML report
+title = YDoc Test Coverage Report
+
+[xml]
+# Output file for XML report
+output = coverage.xml
