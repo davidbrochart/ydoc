@@ -91,7 +91,7 @@ class Awareness(Observable):
         # Emit local state change
         self.emit('change', {'added': [client_id], 'updated': [], 'removed': []})
     
-    def set_local_cursor(self, position: int, selection: Optional[Dict[str, int]] = None) -> None:
+    def set_local_cursor(self, position: int, selection: Dict[str, int] | None = None) -> None:
         """Update local client's cursor position."""
         if self.local_client:
             self.local_client.set_cursor(position, selection)

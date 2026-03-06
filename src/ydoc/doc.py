@@ -3,7 +3,7 @@ Core Document class for YDoc - the main CRDT document container.
 """
 
 import random
-from typing import Any, Dict, Set, Callable, Optional
+from typing import Any, Dict, Set, Callable
 from .id import ID
 from .struct_store import StructStore
 from .transaction import transact
