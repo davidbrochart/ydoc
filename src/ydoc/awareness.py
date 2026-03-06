@@ -8,7 +8,7 @@ This provides the foundation for real-time collaboration features like:
 - Collaboration state synchronization
 """
 
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, List
 from .observable import Observable
 from .encoding import Encoder, Decoder, write_any, read_any
 
@@ -20,11 +20,11 @@ class AwarenessClient:
     
     def __init__(self, client_id: int):
         self.client_id = client_id
-        self.cursor: Optional[Dict[str, Any]] = None
+        self.cursor: Dict[str, Any] | None = None
         self.user: Dict[str, Any] = {}
         self.metadata: Dict[str, Any] = {}
     
-    def set_cursor(self, position: int, selection: Optional[Dict[str, int]] = None) -> None:
+    def set_cursor(self, position: int, selection: Dict[str, int] | None = None) -> None:
         """Set cursor position and selection."""
         self.cursor = {
             'position': position,
@@ -70,7 +70,7 @@ class Awareness(Observable):
         super().__init__()
         self.doc = doc
         self.clients: Dict[int, AwarenessClient] = {}
-        self.local_client: Optional[AwarenessClient] = None
+        self.local_client: AwarenessClient | None = None
         self.last_updated: float = 0.0
         
         # Register with document
@@ -79,7 +79,7 @@ class Awareness(Observable):
         # Set up local client
         self.set_local_state()
     
-    def set_local_state(self, client_id: Optional[int] = None) -> None:
+    def set_local_state(self, client_id: int | None = None) -> None:
         """Set up local client awareness state."""
         if client_id is None:
             client_id = self.doc.client_id
@@ -196,7 +196,7 @@ def add_awareness_support_to_doc():
             self._awareness = Awareness(self)
         return self._awareness
     
-    def set_cursor(self, position: int, selection: Optional[Dict[str, int]] = None) -> None:
+    def set_cursor(self, position: int, selection: Dict[str, int] | None = None) -> None:
         """Set cursor position for local client."""
         awareness = self.get_awareness()
         awareness.set_local_cursor(position, selection)
