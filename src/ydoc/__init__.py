@@ -14,6 +14,11 @@ from .undo_manager import UndoManager
 from .observable import Observable
 from .yevent import YEvent
 from .awareness import Awareness, AwarenessClient
+from .update import (
+    get_state_vector, get_state_update, apply_state_update,
+    merge_updates, get_update_encoding_version, diff_updates,
+    get_missing_updates
+)
 
 __all__ = [
     'Doc',
@@ -26,7 +31,10 @@ __all__ = [
     'UpdateDecoderV1', 'UpdateDecoderV2',
     'UndoManager',
     'Observable', 'YEvent',
-    'Awareness', 'AwarenessClient'
+    'Awareness', 'AwarenessClient',
+    'get_state_vector', 'get_state_update', 'apply_state_update',
+    'merge_updates', 'get_update_encoding_version', 'diff_updates',
+    'get_missing_updates'
 ]
 
 __version__ = "0.1.0"

@@ -6,7 +6,7 @@
 
 This report provides detailed test coverage analysis for the YDoc Python CRDT implementation.
 
-**Latest Update:** Added 21 focused UndoManager tests inspired by Yjs patterns, increasing test suite from 63 to 84 tests.
+**Latest Update:** Added 21 focused UndoManager tests inspired by Yjs patterns, increasing test suite from 63 to 84 tests. Analyzed Yjs conflict resolution patterns for future implementation.
 
 ## Coverage by Module
 
@@ -58,10 +58,11 @@ This report provides detailed test coverage analysis for the YDoc Python CRDT im
 
 ### Areas Needing More Coverage
 
-🔶 **Undo Manager Operations (24%)** - Needs undo/redo execution tests
+🔶 **Undo Manager Operations (24%)** - Needs undo/redo execution tests (core structure now well-tested)
 🔶 **Update Decoder (49%)** - Needs more decoder edge case testing
 🔶 **YEvent System (60%)** - Needs more event handling scenarios
 🔶 **Update Encoder (78%)** - Could use more complex encoding scenarios
+🔶 **Conflict Resolution** - Needs comprehensive conflict resolution tests (analyzed Yjs patterns)
 
 ## Recommendations
 
