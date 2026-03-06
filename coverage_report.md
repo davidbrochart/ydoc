@@ -2,9 +2,11 @@
 
 ## Summary
 
-**Total Coverage: 84%**
+**Total Coverage: 83.78%**
 
 This report provides detailed test coverage analysis for the YDoc Python CRDT implementation.
+
+**Latest Update:** Added comprehensive encoding/decoding tests, increasing test suite from 53 to 63 tests.
 
 ## Coverage by Module
 
@@ -150,6 +152,7 @@ Add this to your GitHub Actions workflow:
 - **Total Tests**: 63
 - **Test Files**: 6
 - **Lines of Test Code**: ~2,500
-- **Coverage**: 84% of production code
+- **Coverage**: 83.78% of production code
+- **Test Coverage Improvement**: +10 new encoding/decoding tests added
 
 The test suite provides solid foundation coverage for core CRDT functionality, with opportunities to expand coverage in advanced features like undo/redo, complex update scenarios, and event handling.
