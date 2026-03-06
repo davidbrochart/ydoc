@@ -3,7 +3,7 @@ Core Document class for YDoc - the main CRDT document container.
 """
 
 import random
-from typing import Any, Dict, Set, Callable
+from typing import Any, Dict, Set, Callable, Optional
 from .id import ID
 from .struct_store import StructStore
 from .transaction import transact
@@ -18,10 +18,10 @@ class Doc(Observable):
     """
     
     def __init__(self, 
-                 guid: Optional[str] = None,
-                 collection_id: Optional[str] = None,
+                 guid: str | None = None,
+                 collection_id: str | None = None,
                  gc: bool = True,
-                 gc_filter: Optional[Callable] = None,
+                 gc_filter: Callable | None = None,
                  meta: Any = None,
                  auto_load: bool = False,
                  should_load: bool = True,

@@ -2,7 +2,7 @@
 Yjs data types implementation for YDoc.
 """
 
-from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING, Set
+from typing import Any, Dict, List, Union, TYPE_CHECKING, Set
 from .id import ID, create_id
 from .struct_store import Item, AbstractStruct
 from .observable import Observable
