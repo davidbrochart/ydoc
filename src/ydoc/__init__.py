@@ -13,6 +13,7 @@ from .update_decoder import UpdateDecoderV1, UpdateDecoderV2
 from .undo_manager import UndoManager
 from .observable import Observable
 from .yevent import YEvent
+from .awareness import Awareness, AwarenessClient
 
 __all__ = [
     'Doc',
@@ -24,7 +25,8 @@ __all__ = [
     'UpdateEncoderV1', 'UpdateEncoderV2',
     'UpdateDecoderV1', 'UpdateDecoderV2',
     'UndoManager',
-    'Observable', 'YEvent'
+    'Observable', 'YEvent',
+    'Awareness', 'AwarenessClient'
 ]
 
 __version__ = "0.1.0"
