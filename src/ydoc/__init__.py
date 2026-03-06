@@ -15,7 +15,7 @@ from .observable import Observable
 from .yevent import YEvent
 from .awareness import Awareness, AwarenessClient
 from .update import (
-    get_state_vector, get_state_update, apply_state_update,
+    get_state_vector, get_state_update, encode_state_as_update, apply_update, apply_state_update,
     merge_updates, get_update_encoding_version, diff_updates,
     get_missing_updates
 )
@@ -32,7 +32,7 @@ __all__ = [
     'UndoManager',
     'Observable', 'YEvent',
     'Awareness', 'AwarenessClient',
-    'get_state_vector', 'get_state_update', 'apply_state_update',
+    'get_state_vector', 'get_state_update', 'encode_state_as_update', 'apply_update', 'apply_state_update',
     'merge_updates', 'get_update_encoding_version', 'diff_updates',
     'get_missing_updates'
 ]

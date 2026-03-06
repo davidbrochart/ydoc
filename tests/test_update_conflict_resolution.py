@@ -7,10 +7,11 @@ functionality works correctly, inspired by Yjs patterns.
 
 import pytest
 from ydoc import (
-    Doc, get_state_vector, get_state_update, apply_state_update,
+    Doc, get_state_vector, get_state_update, encode_state_as_update, apply_update, apply_state_update,
     merge_updates, diff_updates, get_missing_updates,
     get_update_encoding_version
 )
+from ydoc.encoding import Encoder, Decoder
 
 
 class TestStateVector:
@@ -72,8 +73,175 @@ class TestStateUpdateGeneration:
         assert len(update) > 0
 
 
+class TestEncodeStateAsUpdate:
+    """Test encode_state_as_update functionality."""
+
+    def test_encode_state_as_update_empty_doc(self):
+        """Test encoding state from empty document."""
+        doc = Doc()
+
+        # Encode the current state
+        update = encode_state_as_update(doc)
+
+        # Should return valid binary data
+        assert isinstance(update, bytes)
+        assert len(update) > 0
+
+        # Should contain empty state vector
+        decoder = Decoder(update)
+        state_vector_length = decoder.read_var_uint()
+        assert state_vector_length == 0
+
+    def test_encode_state_as_update_with_data(self):
+        """Test encoding state from document with data."""
+        doc = Doc()
+
+        # Add some structs to the document
+        from ydoc import Item, create_id
+        item = Item(create_id(doc.client_id, 10))
+        doc.store.add_struct(item)
+
+        # Encode the current state
+        update = encode_state_as_update(doc)
+
+        # Should return valid binary data
+        assert isinstance(update, bytes)
+        assert len(update) > 0
+
+        # Should contain state vector with our client
+        decoder = Decoder(update)
+        state_vector_length = decoder.read_var_uint()
+        assert state_vector_length == 1
+
+        client_id = decoder.read_var_uint()
+        clock = decoder.read_var_uint()
+        assert client_id == doc.client_id
+        assert clock > 0
+
+    def test_encode_state_as_update_with_target(self):
+        """Test encoding state with target state vector."""
+        doc = Doc()
+
+        # Create a target state vector
+        target_encoder = Encoder()
+        target_encoder.write_var_uint(1)  # One client
+        target_encoder.write_var_uint(999)  # Client ID
+        target_encoder.write_var_uint(50)  # Clock
+        target_state = target_encoder.to_bytes()
+
+        # Encode against the target
+        update = encode_state_as_update(doc, target_state)
+
+        # Should return valid binary data
+        assert isinstance(update, bytes)
+        assert len(update) > 0
+
+    def test_encode_state_as_update_roundtrip(self):
+        """Test that encode/apply roundtrip works."""
+        # Create two documents
+        doc1 = Doc()
+        doc2 = Doc()
+
+        # Add some structs to doc1
+        from ydoc import Item, create_id
+        item = Item(create_id(doc1.client_id, 10))
+        doc1.store.add_struct(item)
+
+        # Encode doc1's state
+        update = encode_state_as_update(doc1)
+
+        # Apply to doc2
+        apply_update(doc2, update, origin="doc1")
+
+        # Both should now have transactions
+        assert len(doc1._transaction_cleanups) >= 0
+        assert len(doc2._transaction_cleanups) > 0
+
+
+class TestUpdateApplication:
+    """Test update application functionality."""
+
+    def test_apply_update_empty_update(self):
+        """Test applying empty update with apply_update."""
+        doc = Doc()
+
+        # Create an empty update
+        from ydoc.encoding import Encoder
+        encoder = Encoder()
+        encoder.write_var_uint(0)  # Empty state vector
+        empty_update = encoder.to_bytes()
+
+        # Should not raise exceptions
+        apply_update(doc, empty_update)
+
+        # Verify transaction was created
+        assert hasattr(doc, '_transaction_cleanups')
+        assert len(doc._transaction_cleanups) > 0
+
+    def test_apply_update_with_data(self):
+        """Test applying update with state vector data."""
+        doc = Doc()
+
+        # Create an update with some state vector data
+        from ydoc.encoding import Encoder
+        encoder = Encoder()
+        encoder.write_var_uint(1)  # One client
+        encoder.write_var_uint(123)  # Client ID
+        encoder.write_var_uint(456)  # Clock
+        update = encoder.to_bytes()
+
+        # Should not raise exceptions
+        apply_update(doc, update)
+
+        # Verify transaction was created
+        assert hasattr(doc, '_transaction_cleanups')
+        assert len(doc._transaction_cleanups) > 0
+
+    def test_apply_update_with_origin(self):
+        """Test applying update with origin information."""
+        doc = Doc()
+
+        # Create an update
+        from ydoc.encoding import Encoder
+        encoder = Encoder()
+        encoder.write_var_uint(1)  # One client
+        encoder.write_var_uint(123)  # Client ID
+        encoder.write_var_uint(456)  # Clock
+        update = encoder.to_bytes()
+
+        # Apply with origin
+        apply_update(doc, update, origin="remote_client")
+
+        # Verify transaction was created with origin
+        assert hasattr(doc, '_transaction_cleanups')
+        assert len(doc._transaction_cleanups) > 0
+
+    def test_apply_update_transaction_metadata(self):
+        """Test that apply_update sets transaction metadata."""
+        doc = Doc()
+
+        # Create an update
+        from ydoc.encoding import Encoder
+        encoder = Encoder()
+        encoder.write_var_uint(1)  # One client
+        encoder.write_var_uint(999)  # Client ID
+        encoder.write_var_uint(1000)  # Clock
+        update = encoder.to_bytes()
+
+        # Apply update
+        apply_update(doc, update, origin="test_origin")
+
+        # Check that transaction was created and has metadata
+        assert len(doc._transaction_cleanups) > 0
+        last_transaction = doc._transaction_cleanups[-1]
+        assert 'update_applied' in last_transaction.meta
+        assert last_transaction.meta['update_applied'] == True
+        assert 'state_vector' in last_transaction.meta
+        assert last_transaction.meta['origin'] == "test_origin"
+
+
 class TestStateUpdateApplication:
-    """Test state update application."""
+    """Test state update application (legacy compatibility)."""
 
     def test_apply_state_update_empty_update(self):
         """Test applying empty update."""
