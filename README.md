@@ -4,6 +4,8 @@ A Python implementation of Yjs core CRDT (Conflict-free Replicated Data Type) fu
 
 ## Status
 
+[![CI Status](https://github.com/yjs/ydoc/actions/workflows/test.yml/badge.svg)](https://github.com/yjs/ydoc/actions/workflows/test.yml)
+
 This is an early-stage translation of Yjs to Python, focusing on the core CRDT algorithms and data structures.
 
 ## Key Features
