@@ -6,7 +6,7 @@
 
 This report provides detailed test coverage analysis for the YDoc Python CRDT implementation.
 
-**Latest Update:** Added comprehensive encoding/decoding tests (10 new tests) and analyzed Yjs test patterns for future porting.
+**Latest Update:** Added 21 focused UndoManager tests inspired by Yjs patterns, increasing test suite from 63 to 84 tests.
 
 ## Coverage by Module
 
@@ -53,11 +53,12 @@ This report provides detailed test coverage analysis for the YDoc Python CRDT im
 ✅ **Struct store** - Core data structure operations
 ✅ **Transaction system** - Atomic operations and state management
 ✅ **Basic types** - YText, YMap, YArray, YXML implementations
-✅ **Encoding/Decoding** - Binary serialization (newly added tests)
+✅ **Encoding/Decoding** - Binary serialization (comprehensive tests)
+✅ **UndoManager Core** - Initialization, stack management, metadata (newly added)
 
 ### Areas Needing More Coverage
 
-🔶 **Undo Manager (24%)** - Needs comprehensive undo/redo operation tests
+🔶 **Undo Manager Operations (24%)** - Needs undo/redo execution tests
 🔶 **Update Decoder (49%)** - Needs more decoder edge case testing
 🔶 **YEvent System (60%)** - Needs more event handling scenarios
 🔶 **Update Encoder (78%)** - Could use more complex encoding scenarios
@@ -149,11 +150,11 @@ Add this to your GitHub Actions workflow:
 
 ## Current Test Suite
 
-- **Total Tests**: 63
-- **Test Files**: 6
-- **Lines of Test Code**: ~2,500
+- **Total Tests**: 84 (↑ from 63)
+- **Test Files**: 7 (↑ from 6)
+- **Lines of Test Code**: ~4,500 (↑ from ~2,500)
 - **Coverage**: 83.78% of production code
-- **Test Coverage Improvement**: +10 new encoding/decoding tests added
-- **Yjs Analysis**: Examined Yjs test structure for future porting
+- **Test Coverage Improvement**: +21 new UndoManager tests added
+- **Yjs Analysis**: Examined Yjs test structure and ported key patterns
 
 The test suite provides solid foundation coverage for core CRDT functionality, with opportunities to expand coverage in advanced features like undo/redo, complex update scenarios, and event handling.
