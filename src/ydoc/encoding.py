@@ -80,30 +80,30 @@ def read_var_uint8_array(decoder_data: bytes, offset: int) -> Tuple[bytes, int]:
 
 class Encoder:
     """Basic encoder for binary data."""
-    
+
     def __init__(self):
         self.buffer = bytearray()
-    
+
     def write_var_uint(self, value: int) -> None:
         """Write variable-length unsigned integer."""
         write_var_uint(self.buffer, value)
-    
+
     def write_var_string(self, string: str) -> None:
         """Write variable-length string."""
         write_var_string(self.buffer, string)
-    
+
     def write_uint8(self, value: int) -> None:
         """Write 8-bit unsigned integer."""
         write_uint8(self.buffer, value)
-    
+
     def write_var_uint8_array(self, data: bytes) -> None:
         """Write variable-length byte array."""
         write_var_uint8_array(self.buffer, data)
-    
+
     def to_bytes(self) -> bytes:
         """Get the encoded bytes."""
         return bytes(self.buffer)
-    
+
     def reset(self) -> None:
         """Reset the encoder."""
         self.buffer = bytearray()
@@ -111,31 +111,31 @@ class Encoder:
 
 class Decoder:
     """Basic decoder for binary data."""
-    
+
     def __init__(self, data: bytes):
         self.data = data
         self.offset = 0
-    
+
     def read_var_uint(self) -> int:
         """Read variable-length unsigned integer."""
         value, self.offset = read_var_uint(self.data, self.offset)
         return value
-    
+
     def read_var_string(self) -> str:
         """Read variable-length string."""
         string, self.offset = read_var_string(self.data, self.offset)
         return string
-    
+
     def read_uint8(self) -> int:
         """Read 8-bit unsigned integer."""
         value, self.offset = read_uint8(self.data, self.offset)
         return value
-    
+
     def read_var_uint8_array(self) -> bytes:
         """Read variable-length byte array."""
         data, self.offset = read_var_uint8_array(self.data, self.offset)
         return data
-    
+
     def has_more(self) -> bool:
         """Check if there's more data to read."""
         return self.offset < len(self.data)
@@ -180,7 +180,7 @@ def write_any(encoder: Encoder, value: Any) -> None:
 def read_any(decoder: Decoder) -> Any:
     """Read any value using a simple type system."""
     type_byte = decoder.read_uint8()
-    
+
     if type_byte == 0:  # null
         return None
     elif type_byte == 1:  # boolean
