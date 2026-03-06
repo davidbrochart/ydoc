@@ -71,6 +71,62 @@ class Doc(Observable):
             self.share[key] = ytype
         return self.share[key]
 
+    def get_text(self, name: str = "text") -> 'YText':
+        """
+        Get or create a YText shared data type.
+
+        Yjs equivalent: doc.getText()
+
+        Args:
+            name: The key/name for the text type
+
+        Returns:
+            YText instance
+        """
+        return self.get(name, "text")
+
+    def get_map(self, name: str = "map") -> 'YMap':
+        """
+        Get or create a YMap shared data type.
+
+        Yjs equivalent: doc.getMap()
+
+        Args:
+            name: The key/name for the map type
+
+        Returns:
+            YMap instance
+        """
+        return self.get(name, "map")
+
+    def get_array(self, name: str = "array") -> 'YArray':
+        """
+        Get or create a YArray shared data type.
+
+        Yjs equivalent: doc.getArray()
+
+        Args:
+            name: The key/name for the array type
+
+        Returns:
+            YArray instance
+        """
+        return self.get(name, "array")
+
+    def get_xml(self, name: str = "xml") -> 'YXml':
+        """
+        Get or create a YXml shared data type.
+
+        Yjs equivalent: doc.getXml()
+
+        Args:
+            name: The key/name for the xml type
+
+        Returns:
+            YXml instance
+        """
+        return self.get(name, "xml")
+
     def transact(self, f: Callable, origin: Any = None) -> Any:
         """
         Execute a function within a transaction.

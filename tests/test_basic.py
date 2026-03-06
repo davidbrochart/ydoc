@@ -3,7 +3,7 @@ Basic tests for YDoc core functionality
 """
 
 import pytest
-from ydoc import Doc, ID, create_id, compare_ids, YText
+from ydoc import Doc, ID, create_id, compare_ids, YText, YMap, YArray, YXml
 
 
 def test_id_creation():
@@ -64,6 +64,51 @@ def test_doc_get():
     # Get the same type again
     same_type = doc.get("text", "text")
     assert text_type == same_type
+
+
+def test_yjs_convenience_methods():
+    """Test Yjs-like convenience methods."""
+    doc = Doc()
+
+    # Test get_text()
+    text = doc.get_text()
+    assert isinstance(text, YText)
+    assert text == doc.get("text", "text")
+
+    # Test get_text() with custom name
+    content = doc.get_text("content")
+    assert isinstance(content, YText)
+    assert content == doc.get("content", "text")
+
+    # Test get_map()
+    map_ = doc.get_map()
+    assert isinstance(map_, YMap)
+    assert map_ == doc.get("map", "map")
+
+    # Test get_map() with custom name
+    data = doc.get_map("data")
+    assert isinstance(data, YMap)
+    assert data == doc.get("data", "map")
+
+    # Test get_array()
+    array = doc.get_array()
+    assert isinstance(array, YArray)
+    assert array == doc.get("array", "array")
+
+    # Test get_array() with custom name
+    items = doc.get_array("items")
+    assert isinstance(items, YArray)
+    assert items == doc.get("items", "array")
+
+    # Test get_xml()
+    xml = doc.get_xml()
+    assert isinstance(xml, YXml)
+    assert xml == doc.get("xml", "xml")
+
+    # Test get_xml() with custom name
+    element = doc.get_xml("element")
+    assert isinstance(element, YXml)
+    assert element == doc.get("element", "xml")
 
 
 def test_doc_transact():

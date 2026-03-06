@@ -37,4 +37,10 @@ __all__ = [
     'get_missing_updates'
 ]
 
+# Add Yjs-like convenience methods to Doc class for better API compatibility
+def add_yjs_convenience_methods():
+    """Add Yjs-like get_* methods to Doc class for API compatibility."""
+    # These methods are already defined in the Doc class
+    pass
+
 __version__ = "0.1.0"
