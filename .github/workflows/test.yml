@@ -2,35 +2,38 @@ name: Run Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu, macos, windows]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - uses: astral-sh/setup-uv@v7
       with:
         python-version: ${{ matrix.python-version }}
+        activate-environment: "true"
 
-    - name: Install dependencies
-      run: pip install --group test -e .
+    - name: Install
+      run: |
+        uv venv
+        uv pip install --group test -e .
 
     - name: Run tests
-      if: ${{ !((matrix.python-version == '3.14') && (matrix.os == 'ubuntu-latest')) }}
-      run: python -m pytest tests
+      if: ${{ !((matrix.python-version == '3.14') && (matrix.os == 'ubuntu')) }}
+      run: uv run pytest --color=yes -v tests/
 
     - name: Check code coverage
-      if: ${{ (matrix.python-version == '3.14') && (matrix.os == 'ubuntu-latest') }}
+      if: ${{ (matrix.python-version == '3.14') && (matrix.os == 'ubuntu') }}
       run: |
-        coverage run -m pytest tests
-        coverage report --show-missing #--fail-under=100
+        uv run coverage run -m pytest tests/
+        uv run coverage report --show-missing #--fail-under=100
