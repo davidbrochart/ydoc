@@ -5,11 +5,17 @@ These tests verify that the conflict resolution and update merging
 functionality works correctly, inspired by Yjs patterns.
 """
 
-import pytest
 from ydoc import (
-    Doc, get_state_vector, get_state_update, encode_state_as_update, apply_update, apply_state_update,
-    merge_updates, diff_updates, get_missing_updates,
-    get_update_encoding_version
+    Doc,
+    get_state_vector,
+    get_state_update,
+    encode_state_as_update,
+    apply_update,
+    apply_state_update,
+    merge_updates,
+    diff_updates,
+    get_missing_updates,
+    get_update_encoding_version,
 )
 from ydoc.encoding import Encoder, Decoder
 
@@ -34,7 +40,8 @@ class TestStateVector:
         text = doc.get("text")
 
         # Manually add a struct to the store for testing
-        from ydoc import ID, create_id, Item
+        from ydoc import create_id, Item
+
         test_id = create_id(doc.client_id, 10)
         test_item = Item(test_id)
         doc.store.add_struct(test_item)
@@ -98,6 +105,7 @@ class TestEncodeStateAsUpdate:
 
         # Add some structs to the document
         from ydoc import Item, create_id
+
         item = Item(create_id(doc.client_id, 10))
         doc.store.add_struct(item)
 
@@ -144,6 +152,7 @@ class TestEncodeStateAsUpdate:
 
         # Add some structs to doc1
         from ydoc import Item, create_id
+
         item = Item(create_id(doc1.client_id, 10))
         doc1.store.add_struct(item)
 
@@ -167,6 +176,7 @@ class TestUpdateApplication:
 
         # Create an empty update
         from ydoc.encoding import Encoder
+
         encoder = Encoder()
         encoder.write_var_uint(0)  # Empty state vector
         empty_update = encoder.to_bytes()
@@ -175,7 +185,7 @@ class TestUpdateApplication:
         apply_update(doc, empty_update)
 
         # Verify transaction was created
-        assert hasattr(doc, '_transaction_cleanups')
+        assert hasattr(doc, "_transaction_cleanups")
         assert len(doc._transaction_cleanups) > 0
 
     def test_apply_update_with_data(self):
@@ -184,6 +194,7 @@ class TestUpdateApplication:
 
         # Create an update with some state vector data
         from ydoc.encoding import Encoder
+
         encoder = Encoder()
         encoder.write_var_uint(1)  # One client
         encoder.write_var_uint(123)  # Client ID
@@ -194,7 +205,7 @@ class TestUpdateApplication:
         apply_update(doc, update)
 
         # Verify transaction was created
-        assert hasattr(doc, '_transaction_cleanups')
+        assert hasattr(doc, "_transaction_cleanups")
         assert len(doc._transaction_cleanups) > 0
 
     def test_apply_update_with_origin(self):
@@ -203,6 +214,7 @@ class TestUpdateApplication:
 
         # Create an update
         from ydoc.encoding import Encoder
+
         encoder = Encoder()
         encoder.write_var_uint(1)  # One client
         encoder.write_var_uint(123)  # Client ID
@@ -213,7 +225,7 @@ class TestUpdateApplication:
         apply_update(doc, update, origin="remote_client")
 
         # Verify transaction was created with origin
-        assert hasattr(doc, '_transaction_cleanups')
+        assert hasattr(doc, "_transaction_cleanups")
         assert len(doc._transaction_cleanups) > 0
 
     def test_apply_update_transaction_metadata(self):
@@ -222,6 +234,7 @@ class TestUpdateApplication:
 
         # Create an update
         from ydoc.encoding import Encoder
+
         encoder = Encoder()
         encoder.write_var_uint(1)  # One client
         encoder.write_var_uint(999)  # Client ID
@@ -234,10 +247,10 @@ class TestUpdateApplication:
         # Check that transaction was created and has metadata
         assert len(doc._transaction_cleanups) > 0
         last_transaction = doc._transaction_cleanups[-1]
-        assert 'update_applied' in last_transaction.meta
-        assert last_transaction.meta['update_applied'] == True
-        assert 'state_vector' in last_transaction.meta
-        assert last_transaction.meta['origin'] == "test_origin"
+        assert "update_applied" in last_transaction.meta
+        assert last_transaction.meta["update_applied"] == True
+        assert "state_vector" in last_transaction.meta
+        assert last_transaction.meta["origin"] == "test_origin"
 
 
 class TestStateUpdateApplication:
@@ -249,6 +262,7 @@ class TestStateUpdateApplication:
 
         # Create an empty update
         from ydoc.encoding import Encoder
+
         encoder = Encoder()
         encoder.write_var_uint(0)  # Empty state vector
         empty_update = encoder.to_bytes()
@@ -262,6 +276,7 @@ class TestStateUpdateApplication:
 
         # Create an update with some state vector data
         from ydoc.encoding import Encoder
+
         encoder = Encoder()
         encoder.write_var_uint(1)  # One client
         encoder.write_var_uint(123)  # Client ID
@@ -279,6 +294,7 @@ class TestUpdateMerging:
         """Test merging two empty updates."""
         # Create two empty updates
         from ydoc.encoding import Encoder
+
         encoder1 = Encoder()
         encoder1.write_var_uint(0)  # Empty state vector
         update1 = encoder1.to_bytes()
@@ -542,6 +558,7 @@ class TestConflictResolutionScenarios:
 
         # Parse merged update to verify contents
         from ydoc.encoding import Decoder
+
         decoder = Decoder(merged)
         num_clients = decoder.read_var_uint()
 
@@ -621,7 +638,11 @@ class TestConflictResolutionScenarios:
         final_state3 = get_state_vector(doc3)
 
         # They should all have the same clients
-        assert set(final_state1.keys()) == set(final_state2.keys()) == set(final_state3.keys())
+        assert (
+            set(final_state1.keys())
+            == set(final_state2.keys())
+            == set(final_state3.keys())
+        )
 
 
 class TestEdgeCases:

@@ -24,19 +24,18 @@ class AwarenessClient:
         self.user: Dict[str, Any] = {}
         self.metadata: Dict[str, Any] = {}
 
-    def set_cursor(self, position: int, selection: Dict[str, int] | None = None) -> None:
+    def set_cursor(
+        self, position: int, selection: Dict[str, int] | None = None
+    ) -> None:
         """Set cursor position and selection."""
         self.cursor = {
-            'position': position,
-            'selection': selection or {'anchor': position, 'head': position}
+            "position": position,
+            "selection": selection or {"anchor": position, "head": position},
         }
 
-    def set_user(self, name: str, color: str = '#000000') -> None:
+    def set_user(self, name: str, color: str = "#000000") -> None:
         """Set user information."""
-        self.user = {
-            'name': name,
-            'color': color
-        }
+        self.user = {"name": name, "color": color}
 
     def set_metadata(self, key: str, value: Any) -> None:
         """Set custom metadata."""
@@ -45,19 +44,19 @@ class AwarenessClient:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
-            'client_id': self.client_id,
-            'cursor': self.cursor,
-            'user': self.user,
-            'metadata': self.metadata
+            "client_id": self.client_id,
+            "cursor": self.cursor,
+            "user": self.user,
+            "metadata": self.metadata,
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'AwarenessClient':
+    def from_dict(cls, data: Dict[str, Any]) -> "AwarenessClient":
         """Create from dictionary."""
-        client = cls(data['client_id'])
-        client.cursor = data.get('cursor')
-        client.user = data.get('user', {})
-        client.metadata = data.get('metadata', {})
+        client = cls(data["client_id"])
+        client.cursor = data.get("cursor")
+        client.user = data.get("user", {})
+        client.metadata = data.get("metadata", {})
         return client
 
 
@@ -66,7 +65,7 @@ class Awareness(Observable):
     Awareness system for tracking collaborative clients and their states.
     """
 
-    def __init__(self, doc: 'Doc'):
+    def __init__(self, doc: "Doc"):
         super().__init__()
         self.doc = doc
         self.clients: Dict[int, AwarenessClient] = {}
@@ -89,23 +88,27 @@ class Awareness(Observable):
         self.clients[client_id] = self.local_client
 
         # Emit local state change
-        self.emit('change', {'added': [client_id], 'updated': [], 'removed': []})
+        self.emit("change", {"added": [client_id], "updated": [], "removed": []})
 
-    def set_local_cursor(self, position: int, selection: Dict[str, int] | None = None) -> None:
+    def set_local_cursor(
+        self, position: int, selection: Dict[str, int] | None = None
+    ) -> None:
         """Update local client's cursor position."""
         if self.local_client:
             self.local_client.set_cursor(position, selection)
             self.emit_cursor_update()
 
-    def set_local_user(self, name: str, color: str = '#000000') -> None:
+    def set_local_user(self, name: str, color: str = "#000000") -> None:
         """Update local client's user information."""
         if self.local_client:
             self.local_client.set_user(name, color)
-            self.emit('update', {'client_id': self.local_client.client_id})
+            self.emit("update", {"client_id": self.local_client.client_id})
 
     def get_states(self) -> Dict[int, Dict[str, Any]]:
         """Get all client states as dictionaries."""
-        return {client_id: client.to_dict() for client_id, client in self.clients.items()}
+        return {
+            client_id: client.to_dict() for client_id, client in self.clients.items()
+        }
 
     def update_client(self, client_id: int, updates: Dict[str, Any]) -> None:
         """Update a remote client's state."""
@@ -117,28 +120,31 @@ class Awareness(Observable):
 
         client = self.clients[client_id]
 
-        if 'cursor' in updates:
-            client.cursor = updates['cursor']
-        if 'user' in updates:
-            client.user = updates['user']
-        if 'metadata' in updates:
-            client.metadata.update(updates['metadata'])
+        if "cursor" in updates:
+            client.cursor = updates["cursor"]
+        if "user" in updates:
+            client.user = updates["user"]
+        if "metadata" in updates:
+            client.metadata.update(updates["metadata"])
 
-        self.emit('update', {'client_id': client_id})
+        self.emit("update", {"client_id": client_id})
 
     def remove_client(self, client_id: int) -> None:
         """Remove a client from awareness."""
         if client_id in self.clients and client_id != self.doc.client_id:
             del self.clients[client_id]
-            self.emit('remove', {'client_id': client_id})
+            self.emit("remove", {"client_id": client_id})
 
     def emit_cursor_update(self) -> None:
         """Emit cursor update event."""
         if self.local_client and self.local_client.cursor:
-            self.emit('cursor-update', {
-                'client_id': self.local_client.client_id,
-                'cursor': self.local_client.cursor
-            })
+            self.emit(
+                "cursor-update",
+                {
+                    "client_id": self.local_client.client_id,
+                    "cursor": self.local_client.cursor,
+                },
+            )
 
     def encode_awareness_update(self) -> bytes:
         """Encode awareness state as binary for network transmission."""
@@ -182,26 +188,31 @@ class Awareness(Observable):
 
     def get_remote_states(self) -> List[Dict[str, Any]]:
         """Get all remote client states."""
-        return [client.to_dict() for client_id, client in self.clients.items() 
-                if client_id != self.doc.client_id]
+        return [
+            client.to_dict()
+            for client_id, client in self.clients.items()
+            if client_id != self.doc.client_id
+        ]
 
 
 def add_awareness_support_to_doc():
     """Add awareness support to Doc class."""
     from .doc import Doc
 
-    def get_awareness(self) -> 'Awareness':
+    def get_awareness(self) -> "Awareness":
         """Get or create the awareness instance for this document."""
-        if not hasattr(self, '_awareness'):
+        if not hasattr(self, "_awareness"):
             self._awareness = Awareness(self)
         return self._awareness
 
-    def set_cursor(self, position: int, selection: Dict[str, int] | None = None) -> None:
+    def set_cursor(
+        self, position: int, selection: Dict[str, int] | None = None
+    ) -> None:
         """Set cursor position for local client."""
         awareness = self.get_awareness()
         awareness.set_local_cursor(position, selection)
 
-    def set_user(self, name: str, color: str = '#000000') -> None:
+    def set_user(self, name: str, color: str = "#000000") -> None:
         """Set user information for local client."""
         awareness = self.get_awareness()
         awareness.set_local_user(name, color)

@@ -2,51 +2,38 @@ name: Run Tests
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
   pull_request:
-    branches: [ main, master ]
+    branches: [main]
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu, macos, windows]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - uses: astral-sh/setup-uv@v7
       with:
         python-version: ${{ matrix.python-version }}
+        activate-environment: "true"
 
-    - name: Install dependencies
+    - name: Install
       run: |
-        python -m pip install --upgrade pip
-        pip install pytest
-        pip install -e .
-      shell: bash
+        uv venv --clear
+        uv pip install --group test -e .
 
     - name: Run tests
-      run: |
-        python -m pytest tests/ -v
-        echo "All tests completed successfully!"
+      if: ${{ !((matrix.python-version == '3.14') && (matrix.os == 'ubuntu')) }}
+      run: uv run pytest --color=yes -v tests/
 
-    - name: Check test coverage
+    - name: Check code coverage
+      if: ${{ (matrix.python-version == '3.14') && (matrix.os == 'ubuntu') }}
       run: |
-        python -m pytest tests/ --tb=short
-        echo "Test coverage check completed!"
-
-    - name: Run specific test files
-      run: |
-        python -m pytest tests/test_basic.py tests/test_types.py -v
-        python -m pytest tests/test_awareness.py -v
-        echo "Specific test files completed successfully!"
-
-    - name: Test summary
-      run: |
-        echo "✅ All tests passed successfully!"
-        echo "📊 Test coverage: $(python -m pytest tests/ --collect-only | grep "collected" | cut -d' ' -f2) tests"
-        echo "🎯 Ready for deployment!"
+        uv run coverage run -m pytest tests/
+        uv run coverage report --show-missing #--fail-under=100

@@ -6,9 +6,14 @@ efficient synchronization of CRDT updates between clients.
 """
 
 from ydoc import (
-    Doc, YText, create_id, 
-    UpdateEncoderV1, UpdateDecoderV1,
-    Encoder, Decoder, write_any, read_any
+    Doc,
+    create_id,
+    UpdateEncoderV1,
+    UpdateDecoderV1,
+    Encoder,
+    Decoder,
+    write_any,
+    read_any,
 )
 
 
@@ -49,10 +54,10 @@ def demo_any_encoding():
             "version": 1.0,
             "active": True,
             "tags": ["crdt", "python", "yjs"],
-            "metadata": None
+            "metadata": None,
         },
         "content": "This is a test document for encoding.",
-        "binary": b"\x01\x02\x03\x04"
+        "binary": b"\x01\x02\x03\x04",
     }
 
     # Encode the complex structure
@@ -106,7 +111,7 @@ def demo_update_encoding():
     content = update_decoder.read_string()
     length = update_decoder.read_len()
 
-    print(f"Decoded update:")
+    print("Decoded update:")
     print(f"  Client: {client}")
     print(f"  Left ID: {left_id}")
     print(f"  Right ID: {right_id}")

@@ -3,7 +3,7 @@ Basic encoding utilities for YDoc - inspired by lib0 encoding
 """
 
 import struct
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 
 
 def write_var_uint(encoder: bytearray, value: int) -> None:
@@ -36,7 +36,7 @@ def read_var_uint(decoder_data: bytes, offset: int) -> Tuple[int, int]:
 
 def write_var_string(encoder: bytearray, string: str) -> None:
     """Write a string with variable-length prefix."""
-    data = string.encode('utf-8')
+    data = string.encode("utf-8")
     write_var_uint(encoder, len(data))
     encoder.extend(data)
 
@@ -46,8 +46,8 @@ def read_var_string(decoder_data: bytes, offset: int) -> Tuple[str, int]:
     length, offset = read_var_uint(decoder_data, offset)
     if offset + length > len(decoder_data):
         raise ValueError("String data exceeds available bytes")
-    string_data = decoder_data[offset:offset + length]
-    return string_data.decode('utf-8'), offset + length
+    string_data = decoder_data[offset : offset + length]
+    return string_data.decode("utf-8"), offset + length
 
 
 def write_uint8(encoder: bytearray, value: int) -> None:
@@ -75,7 +75,7 @@ def read_var_uint8_array(decoder_data: bytes, offset: int) -> Tuple[bytes, int]:
     length, offset = read_var_uint(decoder_data, offset)
     if offset + length > len(decoder_data):
         raise ValueError("Array data exceeds available bytes")
-    return decoder_data[offset:offset + length], offset + length
+    return decoder_data[offset : offset + length], offset + length
 
 
 class Encoder:
@@ -155,7 +155,7 @@ def write_any(encoder: Encoder, value: Any) -> None:
     elif isinstance(value, float):
         encoder.write_uint8(3)  # float
         # Convert float to bytes
-        encoder.write_var_uint(struct.unpack('>Q', struct.pack('>d', value))[0])
+        encoder.write_var_uint(struct.unpack(">Q", struct.pack(">d", value))[0])
     elif isinstance(value, str):
         encoder.write_uint8(4)  # string
         encoder.write_var_string(value)
@@ -190,7 +190,7 @@ def read_any(decoder: Decoder) -> Any:
     elif type_byte == 3:  # float
         # Convert bytes back to float
         float_bits = decoder.read_var_uint()
-        return struct.unpack('>d', struct.pack('>Q', float_bits))[0]
+        return struct.unpack(">d", struct.pack(">Q", float_bits))[0]
     elif type_byte == 4:  # string
         return decoder.read_var_string()
     elif type_byte == 5:  # array

@@ -5,27 +5,29 @@ build-backend = "uv_build"
 [project]
 name = "ydoc"
 version = "0.1.0"
-description = "Python CRDT implementation inspired by Yjs"
-authors = [{name = "YDoc Authors"}]
+description = "Python CRDT implementation transpiled from Yjs"
+authors = [
+  {name = "Mistral Vibe"},
+  {name = "David Brochart", email = "david.brochart@gmail.com"},
+]
 readme = "README.md"
+keywords = ["crdt", "yjs"]
 requires-python = ">=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[dependency-groups]
+test = [
+  "pytest >=9.0.2,<10",
+  "coverage >=7.13.4,<8"
 ]
 
 [project.urls]
-Homepage = "https://github.com/yjs/ydoc"
-
-[tool.uv_build]
-# Configuration for uv_build will go here
-package-dir = "src"
-
-[tool.uv_build.sdist]
-include = ["src/**/*"]
-exclude = ["tests/**/*"]
+Homepage = "https://github.com/davidbrochart/ydoc"

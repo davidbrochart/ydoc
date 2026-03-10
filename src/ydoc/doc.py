@@ -4,12 +4,11 @@ Core Document class for YDoc - the main CRDT document container.
 
 import random
 from typing import Any, Dict, Set, Callable
-from .id import ID
 from .struct_store import StructStore
 from .transaction import transact
 from .types import create_y_type
 from .observable import Observable
-from .yevent import YEvent
+
 
 class Doc(Observable):
     """
@@ -17,15 +16,17 @@ class Doc(Observable):
     This is the main container for CRDT operations.
     """
 
-    def __init__(self, 
-                 guid: str | None = None,
-                 collection_id: str | None = None,
-                 gc: bool = True,
-                 gc_filter: Callable | None = None,
-                 meta: Any = None,
-                 auto_load: bool = False,
-                 should_load: bool = True,
-                 is_suggestion_doc: bool = False):
+    def __init__(
+        self,
+        guid: str | None = None,
+        collection_id: str | None = None,
+        gc: bool = True,
+        gc_filter: Callable | None = None,
+        meta: Any = None,
+        auto_load: bool = False,
+        should_load: bool = True,
+        is_suggestion_doc: bool = False,
+    ):
 
         # Initialize observable first
         Observable.__init__(self)
@@ -43,7 +44,7 @@ class Doc(Observable):
         self.store = StructStore()
         self._transaction = None
         self._transaction_cleanups = []
-        self.subdocs: Set['Doc'] = set()
+        self.subdocs: Set["Doc"] = set()
         self._item = None  # For subdocuments
         self.should_load = should_load
         self.auto_load = auto_load
@@ -56,7 +57,7 @@ class Doc(Observable):
         """Generate a random GUID."""
         return f"{random.randint(0, 0xFFFFFFFF):08x}-{random.randint(0, 0xFFFF):04x}-{random.randint(0, 0xFFFF):04x}-{random.randint(0, 0xFFFFFFFF):08x}"
 
-    def get(self, key: str = "", name: str | None = None) -> 'YType':
+    def get(self, key: str = "", name: str | None = None) -> "YType":
         """
         Define a shared data type.
 
@@ -71,7 +72,7 @@ class Doc(Observable):
             self.share[key] = ytype
         return self.share[key]
 
-    def get_text(self, name: str = "text") -> 'YText':
+    def get_text(self, name: str = "text") -> "YText":
         """
         Get or create a YText shared data type.
 
@@ -85,7 +86,7 @@ class Doc(Observable):
         """
         return self.get(name, "text")
 
-    def get_map(self, name: str = "map") -> 'YMap':
+    def get_map(self, name: str = "map") -> "YMap":
         """
         Get or create a YMap shared data type.
 
@@ -99,7 +100,7 @@ class Doc(Observable):
         """
         return self.get(name, "map")
 
-    def get_array(self, name: str = "array") -> 'YArray':
+    def get_array(self, name: str = "array") -> "YArray":
         """
         Get or create a YArray shared data type.
 
@@ -113,7 +114,7 @@ class Doc(Observable):
         """
         return self.get(name, "array")
 
-    def get_xml(self, name: str = "xml") -> 'YXml':
+    def get_xml(self, name: str = "xml") -> "YXml":
         """
         Get or create a YXml shared data type.
 
@@ -157,20 +158,24 @@ class Doc(Observable):
         """
         self.should_load = True
 
-    def _add_after_transaction_handler(self, handler: Callable[['Transaction'], None]) -> None:
+    def _add_after_transaction_handler(
+        self, handler: Callable[["Transaction"], None]
+    ) -> None:
         """Add a handler to be called after transactions."""
-        if not hasattr(self, '_after_transaction_handlers'):
+        if not hasattr(self, "_after_transaction_handlers"):
             self._after_transaction_handlers = []
         self._after_transaction_handlers.append(handler)
 
-    def _remove_after_transaction_handler(self, handler: Callable[['Transaction'], None]) -> None:
+    def _remove_after_transaction_handler(
+        self, handler: Callable[["Transaction"], None]
+    ) -> None:
         """Remove a handler from after transaction callbacks."""
-        if hasattr(self, '_after_transaction_handlers'):
+        if hasattr(self, "_after_transaction_handlers"):
             if handler in self._after_transaction_handlers:
                 self._after_transaction_handlers.remove(handler)
 
-    def _notify_after_transaction_handlers(self, transaction: 'Transaction') -> None:
+    def _notify_after_transaction_handlers(self, transaction: "Transaction") -> None:
         """Notify all after transaction handlers."""
-        if hasattr(self, '_after_transaction_handlers'):
+        if hasattr(self, "_after_transaction_handlers"):
             for handler in self._after_transaction_handlers:
                 handler(transaction)

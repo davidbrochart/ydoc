@@ -5,27 +5,33 @@ StructStore implementation - core data structure for Yjs CRDT operations.
 from typing import Dict, List, Set
 from .id import ID
 
+
 class AbstractStruct:
     """Base class for all structs in the CRDT."""
+
     def __init__(self, id: ID, length: int = 1):
         self.id = id
         self.length = length
+
 
 class Item(AbstractStruct):
     """
     Item represents a piece of content in the document.
     This is the basic building block of Yjs CRDT.
     """
-    def __init__(self, 
-                 id: ID, 
-                 left: 'Item | None' = None,
-                 origin: ID | None = None,
-                 right: 'Item | None' = None,
-                 right_origin: ID | None = None,
-                 parent: AbstractStruct | None = None,
-                 parent_sub: str | None = None,
-                 content: any = None,
-                 length: int = 1):
+
+    def __init__(
+        self,
+        id: ID,
+        left: "Item | None" = None,
+        origin: ID | None = None,
+        right: "Item | None" = None,
+        right_origin: ID | None = None,
+        parent: AbstractStruct | None = None,
+        parent_sub: str | None = None,
+        content: any = None,
+        length: int = 1,
+    ):
 
         super().__init__(id, length)
         self.left = left
@@ -42,22 +48,26 @@ class Item(AbstractStruct):
         # For garbage collection
         self.info = 0
 
-    def delete(self, transaction: 'Transaction') -> None:
+    def delete(self, transaction: "Transaction") -> None:
         """Mark this item as deleted."""
         self.deleted = True
-        if hasattr(transaction, 'delete_set'):
+        if hasattr(transaction, "delete_set"):
             transaction.delete_set.add(self.id)
+
 
 class GC(AbstractStruct):
     """Garbage collection marker."""
+
     def __init__(self, id: ID):
         super().__init__(id)
+
 
 class StructStore:
     """
     The main data structure that stores all the structs (Items and GCs).
     This is where the CRDT magic happens.
     """
+
     def __init__(self):
         # Map of client ID to list of structs
         self.clients: Dict[int, List[AbstractStruct]] = {}
@@ -128,7 +138,7 @@ class StructStore:
         """Check the integrity of the struct store."""
         for client_id, structs in self.clients.items():
             for i in range(1, len(structs)):
-                left = structs[i-1]
+                left = structs[i - 1]
                 right = structs[i]
                 if left.id.clock + left.length != right.id.clock:
                     return False

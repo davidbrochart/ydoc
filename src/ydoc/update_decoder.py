@@ -2,7 +2,7 @@
 UpdateDecoder implementation for YDoc - binary decoding of updates
 """
 
-from typing import Dict, List, Any
+from typing import List, Any
 from .encoding import Decoder, read_var_uint, read_uint8
 from .id import ID, create_id
 
@@ -66,6 +66,7 @@ class UpdateDecoderV1:
     def read_any(self) -> Any:
         """Read any value."""
         from .encoding import read_any
+
         return read_any(self.rest_decoder)
 
     def read_buf(self) -> bytes:
@@ -150,6 +151,7 @@ class UpdateDecoderV2:
     def read_any(self) -> Any:
         """Read any value."""
         from .encoding import read_any
+
         return read_any(self.main_decoder)
 
     def read_buf(self) -> bytes:

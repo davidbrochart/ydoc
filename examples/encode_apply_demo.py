@@ -144,7 +144,7 @@ def demo_multi_client_sync():
     for i, client in enumerate(clients):
         update = encode_state_as_update(client)
         updates.append(update)
-        print(f"Client {i+1} encoded {len(update)} bytes")
+        print(f"Client {i + 1} encoded {len(update)} bytes")
 
     # Client 1 (the "server") collects all updates
     server = clients[0]
@@ -174,7 +174,7 @@ def demo_error_handling():
 
     # Test with malformed target state
     try:
-        malformed_target = b'\x01\x00'  # Incomplete state vector
+        malformed_target = b"\x01\x00"  # Incomplete state vector
         update = encode_state_as_update(doc, malformed_target)
         print("✓ Malformed target handled gracefully")
     except Exception as e:
@@ -182,7 +182,7 @@ def demo_error_handling():
 
     # Test with empty target
     try:
-        empty_target = b'\x00'  # Empty state vector
+        empty_target = b"\x00"  # Empty state vector
         update = encode_state_as_update(doc, empty_target)
         print("✓ Empty target handled correctly")
     except Exception as e:

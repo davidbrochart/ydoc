@@ -17,9 +17,9 @@ def test_awareness_initialization():
 
     # Check local client
     local_state = awareness.get_local_state()
-    assert local_state['client_id'] == doc.client_id
-    assert 'user' in local_state
-    assert 'cursor' in local_state
+    assert local_state["client_id"] == doc.client_id
+    assert "user" in local_state
+    assert "cursor" in local_state
 
 
 def test_client_state_management():
@@ -30,22 +30,22 @@ def test_client_state_management():
     # Test setting user info
     awareness.set_local_user("Test User", "#FF5733")
     local_state = awareness.get_local_state()
-    assert local_state['user']['name'] == "Test User"
-    assert local_state['user']['color'] == "#FF5733"
+    assert local_state["user"]["name"] == "Test User"
+    assert local_state["user"]["color"] == "#FF5733"
 
     # Test setting cursor
     awareness.set_local_cursor(42)
     local_state = awareness.get_local_state()
-    assert local_state['cursor']['position'] == 42
-    assert local_state['cursor']['selection']['anchor'] == 42
-    assert local_state['cursor']['selection']['head'] == 42
+    assert local_state["cursor"]["position"] == 42
+    assert local_state["cursor"]["selection"]["anchor"] == 42
+    assert local_state["cursor"]["selection"]["head"] == 42
 
     # Test setting cursor with selection
-    awareness.set_local_cursor(100, {'anchor': 90, 'head': 110})
+    awareness.set_local_cursor(100, {"anchor": 90, "head": 110})
     local_state = awareness.get_local_state()
-    assert local_state['cursor']['position'] == 100
-    assert local_state['cursor']['selection']['anchor'] == 90
-    assert local_state['cursor']['selection']['head'] == 110
+    assert local_state["cursor"]["position"] == 100
+    assert local_state["cursor"]["selection"]["anchor"] == 90
+    assert local_state["cursor"]["selection"]["head"] == 110
 
 
 def test_remote_client_management():
@@ -64,8 +64,8 @@ def test_remote_client_management():
     assert len(states) == 2  # Local + remote
 
     remote_state = states[999]
-    assert remote_state['user']['name'] == "Remote User"
-    assert remote_state['cursor']['position'] == 200
+    assert remote_state["user"]["name"] == "Remote User"
+    assert remote_state["cursor"]["position"] == 200
 
     # Remove remote client
     awareness.remove_client(999)
@@ -84,17 +84,19 @@ def test_awareness_events():
         events_caught.append((event_type, data))
 
     # Test various events
-    awareness.on('change', lambda data: handle_event('change', data))
-    awareness.on('update', lambda data: handle_event('update', data))
-    awareness.on('remove', lambda data: handle_event('remove', data))
-    awareness.on('cursor-update', lambda data: handle_event('cursor-update', data))
+    awareness.on("change", lambda data: handle_event("change", data))
+    awareness.on("update", lambda data: handle_event("update", data))
+    awareness.on("remove", lambda data: handle_event("remove", data))
+    awareness.on("cursor-update", lambda data: handle_event("cursor-update", data))
 
     # These should trigger events
     awareness.set_local_user("Test", "#000000")
     awareness.set_local_cursor(50)
 
     # Add and remove remote client
-    awareness.update_client(123, {'user': {'name': 'Remote'}, 'cursor': {'position': 100}})
+    awareness.update_client(
+        123, {"user": {"name": "Remote"}, "cursor": {"position": 100}}
+    )
     awareness.remove_client(123)
 
     assert len(events_caught) > 0
@@ -111,10 +113,10 @@ def test_encoding_decoding():
     # Set up some state
     awareness.set_local_user("Test User", "#123456")
     awareness.set_local_cursor(50)
-    awareness.update_client(123, {
-        'user': {'name': 'Remote', 'color': '#654321'},
-        'cursor': {'position': 75}
-    })
+    awareness.update_client(
+        123,
+        {"user": {"name": "Remote", "color": "#654321"}, "cursor": {"position": 75}},
+    )
 
     # Encode
     encoded = awareness.encode_awareness_update()
@@ -131,8 +133,8 @@ def test_encoding_decoding():
     # Check that remote client was added
     remote_state = states2.get(123)
     if remote_state:
-        assert remote_state['user']['name'] == 'Remote'
-        assert remote_state['cursor']['position'] == 75
+        assert remote_state["user"]["name"] == "Remote"
+        assert remote_state["cursor"]["position"] == 75
 
 
 def test_doc_convenience_methods():
@@ -147,8 +149,8 @@ def test_doc_convenience_methods():
     assert len(states) == 1
 
     local_state = states[doc.client_id]
-    assert local_state['user']['name'] == "Convenience User"
-    assert local_state['cursor']['position'] == 300
+    assert local_state["user"]["name"] == "Convenience User"
+    assert local_state["cursor"]["position"] == 300
 
 
 def test_awareness_client_class():
@@ -163,21 +165,21 @@ def test_awareness_client_class():
 
     # Test setting values
     client.set_user("Test User", "#FF0000")
-    assert client.user['name'] == "Test User"
-    assert client.user['color'] == "#FF0000"
+    assert client.user["name"] == "Test User"
+    assert client.user["color"] == "#FF0000"
 
     client.set_cursor(100)
-    assert client.cursor['position'] == 100
+    assert client.cursor["position"] == 100
 
     client.set_metadata("custom_key", "custom_value")
-    assert client.metadata['custom_key'] == "custom_value"
+    assert client.metadata["custom_key"] == "custom_value"
 
     # Test serialization
     data = client.to_dict()
-    assert data['client_id'] == 42
-    assert data['user']['name'] == "Test User"
-    assert data['cursor']['position'] == 100
-    assert data['metadata']['custom_key'] == "custom_value"
+    assert data["client_id"] == 42
+    assert data["user"]["name"] == "Test User"
+    assert data["cursor"]["position"] == 100
+    assert data["metadata"]["custom_key"] == "custom_value"
 
     # Test deserialization
     client2 = AwarenessClient.from_dict(data)
@@ -193,27 +195,30 @@ def test_observable_patterns():
     awareness = doc.get_awareness()
 
     # Test has_listeners
-    assert not awareness.has_listeners('change')
+    assert not awareness.has_listeners("change")
 
     # Add listener
-    def dummy_listener(data): pass
-    awareness.on('change', dummy_listener)
-    assert awareness.has_listeners('change')
+    def dummy_listener(data):
+        pass
+
+    awareness.on("change", dummy_listener)
+    assert awareness.has_listeners("change")
 
     # Test once
     once_called = []
+
     def once_listener(data):
         once_called.append(data)
 
-    awareness.once('update', once_listener)
-    awareness.emit('update', {'test': 'data'})
-    awareness.emit('update', {'test': 'data2'})
+    awareness.once("update", once_listener)
+    awareness.emit("update", {"test": "data"})
+    awareness.emit("update", {"test": "data2"})
 
     assert len(once_called) == 1
 
     # Test remove_all_listeners
     awareness.remove_all_listeners()
-    assert not awareness.has_listeners('change')
+    assert not awareness.has_listeners("change")
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ This example demonstrates the undo/redo functionality that allows users
 to revert and reapply changes made to collaborative documents.
 """
 
-from ydoc import Doc, YText
+from ydoc import Doc
 
 
 def demo_basic_undo_redo():
@@ -56,7 +56,7 @@ def demo_undo_manager_features():
     # Customize undo manager
     undo_manager = doc.add_undo_manager(
         capture_timeout=1.0,  # Merge changes within 1 second
-        tracked_origins={"user", None}  # Only track user actions and default
+        tracked_origins={"user", None},  # Only track user actions and default
     )
 
     text = doc.get("content", "text")

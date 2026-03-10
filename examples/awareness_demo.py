@@ -5,8 +5,7 @@ This example demonstrates the awareness system that enables real-time
 collaboration features like presence tracking and cursor sharing.
 """
 
-from ydoc import Doc, Awareness
-import json
+from ydoc import Doc
 
 
 def demo_basic_awareness():
@@ -26,11 +25,11 @@ def demo_basic_awareness():
     awareness.set_local_user("Alice", "#FF5733")
 
     # Set cursor position
-    awareness.set_local_cursor(42, {'anchor': 40, 'head': 45})
+    awareness.set_local_cursor(42, {"anchor": 40, "head": 45})
 
     # Get current state
     local_state = awareness.get_local_state()
-    print(f"\nLocal client state:")
+    print("\nLocal client state:")
     print(f"  User: {local_state['user']['name']} ({local_state['user']['color']})")
     print(f"  Cursor: position={local_state['cursor']['position']}")
     print(f"  Selection: {local_state['cursor']['selection']}")
@@ -58,8 +57,12 @@ def demo_collaboration_simulation():
     awareness2.set_local_user("Bob", "#3357FF")
     awareness2.set_local_cursor(200)
 
-    print(f"Client 1 (ID {doc1.client_id}): {awareness1.get_local_state()['user']['name']}")
-    print(f"Client 2 (ID {doc2.client_id}): {awareness2.get_local_state()['user']['name']}")
+    print(
+        f"Client 1 (ID {doc1.client_id}): {awareness1.get_local_state()['user']['name']}"
+    )
+    print(
+        f"Client 2 (ID {doc2.client_id}): {awareness2.get_local_state()['user']['name']}"
+    )
 
     # Simulate network transmission
     print("\nSimulating network synchronization...")
@@ -84,15 +87,19 @@ def demo_collaboration_simulation():
 
     print(f"\nClient 1 sees {len(states1)} clients:")
     for client_id, state in states1.items():
-        user = state['user']
-        cursor = state['cursor']
-        print(f"  - Client {client_id}: {user['name']} at position {cursor['position'] if cursor else 'none'}")
+        user = state["user"]
+        cursor = state["cursor"]
+        print(
+            f"  - Client {client_id}: {user['name']} at position {cursor['position'] if cursor else 'none'}"
+        )
 
     print(f"\nClient 2 sees {len(states2)} clients:")
     for client_id, state in states2.items():
-        user = state['user']
-        cursor = state['cursor']
-        print(f"  - Client {client_id}: {user['name']} at position {cursor['position'] if cursor else 'none'}")
+        user = state["user"]
+        cursor = state["cursor"]
+        print(
+            f"  - Client {client_id}: {user['name']} at position {cursor['position'] if cursor else 'none'}"
+        )
 
     print()
 
@@ -106,22 +113,22 @@ def demo_awareness_events():
 
     # Set up event listeners
     def handle_cursor_update(data):
-        client_id = data['client_id']
-        cursor = data['cursor']
+        client_id = data["client_id"]
+        cursor = data["cursor"]
         print(f"Cursor update from client {client_id}: position {cursor['position']}")
 
     def handle_client_update(data):
-        client_id = data['client_id']
+        client_id = data["client_id"]
         print(f"Client {client_id} updated their state")
 
     def handle_client_remove(data):
-        client_id = data['client_id']
+        client_id = data["client_id"]
         print(f"Client {client_id} disconnected")
 
     # Register listeners
-    awareness.on('cursor-update', handle_cursor_update)
-    awareness.on('update', handle_client_update)
-    awareness.on('remove', handle_client_remove)
+    awareness.on("cursor-update", handle_cursor_update)
+    awareness.on("update", handle_client_update)
+    awareness.on("remove", handle_client_remove)
 
     print("Event listeners registered. Making changes...")
 
@@ -131,10 +138,13 @@ def demo_awareness_events():
     awareness.set_local_cursor(75)
 
     # Simulate a remote client
-    awareness.update_client(999, {
-        'user': {'name': 'Remote User', 'color': '#654321'},
-        'cursor': {'position': 150}
-    })
+    awareness.update_client(
+        999,
+        {
+            "user": {"name": "Remote User", "color": "#654321"},
+            "cursor": {"position": 150},
+        },
+    )
 
     # Remove the remote client
     awareness.remove_client(999)
@@ -153,7 +163,7 @@ def demo_doc_convenience_methods():
 
     # Use convenience methods
     doc.set_user("Convenience User", "#ABCDEF")
-    doc.set_cursor(300, {'anchor': 290, 'head': 310})
+    doc.set_cursor(300, {"anchor": 290, "head": 310})
 
     # Get all awareness states
     states = doc.get_awareness_states()
@@ -161,8 +171,8 @@ def demo_doc_convenience_methods():
     print(f"Awareness states: {len(states)} clients")
 
     for client_id, state in states.items():
-        user = state['user']
-        cursor = state['cursor']
+        user = state["user"]
+        cursor = state["cursor"]
         print(f"Client {client_id}:")
         print(f"  Name: {user['name']}")
         print(f"  Color: {user['color']}")
@@ -187,14 +197,16 @@ def demo_practical_usage():
     cursor_history = []
 
     def track_cursor(data):
-        cursor_history.append({
-            'client_id': data['client_id'],
-            'position': data['cursor']['position'],
-            'timestamp': 'now'
-        })
+        cursor_history.append(
+            {
+                "client_id": data["client_id"],
+                "position": data["cursor"]["position"],
+                "timestamp": "now",
+            }
+        )
         print(f"Cursor moved to: {data['cursor']['position']}")
 
-    awareness.on('cursor-update', track_cursor)
+    awareness.on("cursor-update", track_cursor)
 
     # Simulate user typing and moving cursor
     print("Simulating user activity...")
@@ -207,24 +219,27 @@ def demo_practical_usage():
 
     # Simulate remote collaborators
     remote_users = [
-        {'client_id': 1001, 'name': 'User A', 'color': '#E74C3C'},
-        {'client_id': 1002, 'name': 'User B', 'color': '#3498DB'},
-        {'client_id': 1003, 'name': 'User C', 'color': '#F39C12'}
+        {"client_id": 1001, "name": "User A", "color": "#E74C3C"},
+        {"client_id": 1002, "name": "User B", "color": "#3498DB"},
+        {"client_id": 1003, "name": "User C", "color": "#F39C12"},
     ]
 
     for user in remote_users:
-        awareness.update_client(user['client_id'], {
-            'user': {'name': user['name'], 'color': user['color']},
-            'cursor': {'position': 50 + user['client_id'] % 100}
-        })
+        awareness.update_client(
+            user["client_id"],
+            {
+                "user": {"name": user["name"], "color": user["color"]},
+                "cursor": {"position": 50 + user["client_id"] % 100},
+            },
+        )
 
     # Show all active collaborators
     states = awareness.get_states()
     print(f"\nActive collaborators: {len(states)}")
 
     for client_id, state in states.items():
-        user = state['user']
-        cursor = state['cursor']
+        user = state["user"]
+        cursor = state["cursor"]
         is_local = client_id == doc.client_id
 
         status = "👤 Local" if is_local else "👥 Remote"
@@ -251,10 +266,13 @@ def demo_encoding_performance():
 
     for i in range(num_remote_clients):
         client_id = 2000 + i
-        awareness.update_client(client_id, {
-            'user': {'name': f'User {i}', 'color': f'#{i:06X}'},
-            'cursor': {'position': 500 + i * 10}
-        })
+        awareness.update_client(
+            client_id,
+            {
+                "user": {"name": f"User {i}", "color": f"#{i:06X}"},
+                "cursor": {"position": 500 + i * 10},
+            },
+        )
 
     # Encode the awareness state
     encoded = awareness.encode_awareness_update()
@@ -275,10 +293,12 @@ def demo_encoding_performance():
     original_local = awareness.get_local_state()
     decoded_local = awareness2.get_local_state()
 
-    local_preserved = decoded_local['client_id'] == doc2.client_id
+    local_preserved = decoded_local["client_id"] == doc2.client_id
     print(f"Local client preserved: {local_preserved}")
 
-    remote_clients_decoded = len([s for s in states2.values() if s['client_id'] != doc2.client_id])
+    remote_clients_decoded = len(
+        [s for s in states2.values() if s["client_id"] != doc2.client_id]
+    )
     print(f"Remote clients decoded: {remote_clients_decoded}/{num_remote_clients}")
 
     print()

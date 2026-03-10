@@ -8,9 +8,8 @@ This module provides functionality for:
 - Conflict resolution using CRDT principles
 """
 
-from typing import Dict, Any, Tuple
+from typing import Dict, Any
 from .encoding import Encoder, Decoder
-from .id import ID
 from .doc import Doc
 
 
@@ -153,10 +152,10 @@ def apply_update(doc: Doc, update_data: bytes, origin: Any = None) -> None:
         # 4. Updating the delete set
 
         # For now, we'll just mark that we've processed the update
-        transaction.meta['update_applied'] = True
-        transaction.meta['state_vector'] = state_vector
+        transaction.meta["update_applied"] = True
+        transaction.meta["state_vector"] = state_vector
         if origin:
-            transaction.meta['origin'] = origin
+            transaction.meta["origin"] = origin
 
     # Execute the update application in a transaction
     doc.transact(apply_update_in_transaction, origin)

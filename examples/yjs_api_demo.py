@@ -78,7 +78,7 @@ def demo_real_world_usage():
 
     # Set up the document structure (like Yjs)
     content = doc.get_text("content")  # Main text content
-    users = doc.get_map("users")     # User presence/metadata
+    users = doc.get_map("users")  # User presence/metadata
     comments = doc.get_array("comments")  # Comments array
 
     print("Collaborative editor document structure:")
@@ -106,7 +106,7 @@ def demo_all_types():
         ("get_text", doc.get_text("text")),
         ("get_map", doc.get_map("map")),
         ("get_array", doc.get_array("array")),
-        ("get_xml", doc.get_xml("xml"))
+        ("get_xml", doc.get_xml("xml")),
     ]
 
     print("Available Yjs-like methods:")
@@ -148,9 +148,9 @@ def demo_migration_from_yjs():
 
     # Verify it actually works
     doc = Doc()
-    text = doc.get_text('content')
-    map_ = doc.get_map('data')
-    array = doc.get_array('items')
+    text = doc.get_text("content")
+    map_ = doc.get_map("data")
+    array = doc.get_array("items")
 
     print("\n✅ Migration is straightforward!")
     print("✅ Only difference: snake_case vs camelCase")
