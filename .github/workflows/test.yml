@@ -25,7 +25,6 @@ jobs:
 
     - name: Install
       run: |
-        uv venv
         uv pip install --group test -e .
 
     - name: Run tests
