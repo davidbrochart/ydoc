@@ -3,9 +3,9 @@ Observable pattern implementation for YDoc event system.
 Inspired by lib0/observable but simplified for Python.
 """
 
-from typing import Dict, List, Callable, Any, TypeVar, Generic
+from typing import Dict, List, Callable, TypeVar, Generic
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Observable(Generic[T]):
@@ -38,9 +38,11 @@ class Observable(Generic[T]):
 
     def once(self, event_name: str, callback: Callable) -> None:
         """Add a one-time event listener."""
+
         def wrapper(*args, **kwargs):
             callback(*args, **kwargs)
             self.off(event_name, wrapper)
+
         self.on(event_name, wrapper)
 
     def remove_all_listeners(self, event_name: str | None = None) -> None:

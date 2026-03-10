@@ -5,7 +5,7 @@ This example demonstrates the new apply_update() functionality,
 showing how to apply binary updates to documents.
 """
 
-from ydoc import Doc, apply_update, get_state_update, Encoder
+from ydoc import Doc, apply_update, Encoder
 
 
 def demo_basic_apply_update():
@@ -49,7 +49,9 @@ def demo_update_with_origin():
     for i, doc in enumerate(docs):
         doc.client_id = i + 1
 
-    print(f"Created {len(docs)} documents with client IDs: {[doc.client_id for doc in docs]}")
+    print(
+        f"Created {len(docs)} documents with client IDs: {[doc.client_id for doc in docs]}"
+    )
 
     # Client 2 creates an update and sends to others
     encoder = Encoder()
@@ -69,7 +71,7 @@ def demo_update_with_origin():
     for i, doc in enumerate([docs[0], docs[2]]):
         if doc._transaction_cleanups:
             last_tx = doc._transaction_cleanups[-1]
-            print(f"✓ Client {i+1} transaction origin: {last_tx.meta.get('origin')}")
+            print(f"✓ Client {i + 1} transaction origin: {last_tx.meta.get('origin')}")
 
     print()
 
@@ -118,7 +120,7 @@ def demo_update_propagation():
     if charlie._transaction_cleanups:
         print(f"✓ Charlie processed {len(charlie._transaction_cleanups)} updates")
         for i, tx in enumerate(charlie._transaction_cleanups):
-            print(f"  Update {i+1} origin: {tx.meta.get('origin')}")
+            print(f"  Update {i + 1} origin: {tx.meta.get('origin')}")
 
     print()
 
@@ -142,7 +144,7 @@ def demo_error_handling():
 
     # Test with malformed update (incomplete data)
     try:
-        malformed_update = b'\x01'  # Just the length, missing client data
+        malformed_update = b"\x01"  # Just the length, missing client data
         apply_update(doc, malformed_update, origin="malformed_test")
         print("❌ Malformed update should have failed")
     except Exception as e:

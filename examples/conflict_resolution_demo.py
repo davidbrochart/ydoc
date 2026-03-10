@@ -7,8 +7,13 @@ changes that are automatically resolved using CRDT principles.
 """
 
 from ydoc import (
-    Doc, get_state_vector, get_state_update, apply_state_update,
-    merge_updates, diff_updates, get_missing_updates
+    Doc,
+    get_state_vector,
+    get_state_update,
+    apply_state_update,
+    merge_updates,
+    diff_updates,
+    get_missing_updates,
 )
 from ydoc.encoding import Encoder, Decoder
 
@@ -69,20 +74,20 @@ def demo_update_differences():
     # Create two different updates
     encoder1 = Encoder()
     encoder1.write_var_uint(2)  # Two clients
-    encoder1.write_var_uint(1)   # Client 1
-    encoder1.write_var_uint(100) # Clock 100
-    encoder1.write_var_uint(2)   # Client 2
-    encoder1.write_var_uint(200) # Clock 200
+    encoder1.write_var_uint(1)  # Client 1
+    encoder1.write_var_uint(100)  # Clock 100
+    encoder1.write_var_uint(2)  # Client 2
+    encoder1.write_var_uint(200)  # Clock 200
     update1 = encoder1.to_bytes()
 
     encoder2 = Encoder()
     encoder2.write_var_uint(3)  # Three clients
-    encoder2.write_var_uint(1)   # Client 1
-    encoder2.write_var_uint(150) # Clock 150 (higher)
-    encoder2.write_var_uint(2)   # Client 2
-    encoder2.write_var_uint(200) # Clock 200 (same)
-    encoder2.write_var_uint(3)   # Client 3
-    encoder2.write_var_uint(300) # Clock 300 (new)
+    encoder2.write_var_uint(1)  # Client 1
+    encoder2.write_var_uint(150)  # Clock 150 (higher)
+    encoder2.write_var_uint(2)  # Client 2
+    encoder2.write_var_uint(200)  # Clock 200 (same)
+    encoder2.write_var_uint(3)  # Client 3
+    encoder2.write_var_uint(300)  # Clock 300 (new)
     update2 = encoder2.to_bytes()
 
     print(f"Update 1: {len(update1)} bytes")
@@ -125,8 +130,12 @@ def demo_missing_updates_detection():
     missing_from_c1_to_c3 = get_missing_updates(doc_client1, doc_client3)
     missing_from_c2_to_c3 = get_missing_updates(doc_client2, doc_client3)
 
-    print(f"Updates missing from client1 to client3: {len(missing_from_c1_to_c3)} bytes")
-    print(f"Updates missing from client2 to client3: {len(missing_from_c2_to_c3)} bytes")
+    print(
+        f"Updates missing from client1 to client3: {len(missing_from_c1_to_c3)} bytes"
+    )
+    print(
+        f"Updates missing from client2 to client3: {len(missing_from_c2_to_c3)} bytes"
+    )
 
     # Parse missing updates
     if len(missing_from_c1_to_c3) > 0:
@@ -161,7 +170,7 @@ def demo_multi_client_merge():
     merged = updates[0]
     for i in range(1, 4):
         merged = merge_updates(merged, updates[i])
-        print(f"After merging client {i+1}: {len(merged)} bytes")
+        print(f"After merging client {i + 1}: {len(merged)} bytes")
 
     # Parse the final merged update
     decoder = Decoder(merged)

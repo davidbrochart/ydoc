@@ -68,10 +68,10 @@ def demo_api_usage_patterns():
     print("📝 Pattern 1: Default Names")
     print("-" * 30)
     # Using default names
-    content = doc.get_text()      # Uses "text" as default name
-    data = doc.get_map()         # Uses "map" as default name
-    items = doc.get_array()      # Uses "array" as default name
-    element = doc.get_xml()      # Uses "xml" as default name
+    content = doc.get_text()  # Uses "text" as default name
+    data = doc.get_map()  # Uses "map" as default name
+    items = doc.get_array()  # Uses "array" as default name
+    element = doc.get_xml()  # Uses "xml" as default name
 
     print("content = doc.get_text()      # name='text'")
     print("data = doc.get_map()         # name='map'")

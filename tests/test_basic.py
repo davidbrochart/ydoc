@@ -3,7 +3,7 @@ Basic tests for YDoc core functionality
 """
 
 import pytest
-from ydoc import Doc, ID, create_id, compare_ids, YText, YMap, YArray, YXml
+from ydoc import Doc, create_id, compare_ids, YText, YMap, YArray, YXml
 
 
 def test_id_creation():
@@ -43,7 +43,7 @@ def test_doc_with_options():
         guid="test-guid",
         collection_id="test-collection",
         gc=False,
-        meta={"test": "value"}
+        meta={"test": "value"},
     )
 
     assert doc.guid == "test-guid"

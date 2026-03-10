@@ -4,7 +4,6 @@ UndoManager implementation for YDoc - enables undo/redo functionality
 
 import time
 from typing import Dict, List, Set, Any, Callable
-from .id import ID
 from .struct_store import Item
 from .types import YText
 
@@ -28,10 +27,13 @@ class UndoManager:
     Tracks changes and allows reverting or reapplying them.
     """
 
-    def __init__(self, doc: 'Doc', 
-                 capture_timeout: float = 0.5,
-                 capture_transaction: Callable[['Transaction'], bool] | None = None,
-                 tracked_origins: Set[Any] | None = None) -> None:
+    def __init__(
+        self,
+        doc: "Doc",
+        capture_timeout: float = 0.5,
+        capture_transaction: Callable[["Transaction"], bool] | None = None,
+        tracked_origins: Set[Any] | None = None,
+    ) -> None:
         """
         Initialize UndoManager.
 
@@ -59,7 +61,7 @@ class UndoManager:
         # Register event handlers
         self.doc._add_after_transaction_handler(self._after_transaction_handler)
 
-    def _after_transaction_handler(self, transaction: 'Transaction') -> None:
+    def _after_transaction_handler(self, transaction: "Transaction") -> None:
         """Handle transactions to capture undo/redo information."""
         # Check if we should capture this transaction
         if not self._should_capture_transaction(transaction):
@@ -79,11 +81,15 @@ class UndoManager:
         current_time = time.time()
 
         # Get the before state from transaction metadata (set by before_transaction_handler)
-        before_state = getattr(transaction, '_undo_before_state', {})
+        before_state = getattr(transaction, "_undo_before_state", {})
 
-        if (self.last_change_time > 0 and 
-            current_time - self.last_change_time < self.capture_timeout and
-            stack and not self.undoing and not self.redoing):
+        if (
+            self.last_change_time > 0
+            and current_time - self.last_change_time < self.capture_timeout
+            and stack
+            and not self.undoing
+            and not self.redoing
+        ):
             # Merge with previous stack item
             stack_item = stack[-1]
             # Store after state
@@ -93,7 +99,7 @@ class UndoManager:
             stack_item = StackItem()
             # Store before state (from transaction metadata)
             for ytype_id, content in before_state.items():
-                stack_item.meta[f'before_text_content_{ytype_id}'] = content
+                stack_item.meta[f"before_text_content_{ytype_id}"] = content
             # Store after state
             self._capture_current_state(transaction, stack_item, is_after_state=True)
             stack.append(stack_item)
@@ -102,16 +108,18 @@ class UndoManager:
         if not self.undoing and not self.redoing:
             self.last_change_time = current_time
 
-    def _capture_current_state(self, transaction: 'Transaction', stack_item: StackItem, is_after_state: bool) -> None:
+    def _capture_current_state(
+        self, transaction: "Transaction", stack_item: StackItem, is_after_state: bool
+    ) -> None:
         """Capture the current state of YText types."""
-        prefix = 'after_' if is_after_state else 'before_'
+        prefix = "after_" if is_after_state else "before_"
 
         for ytype in transaction.doc.share.values():
             if isinstance(ytype, YText):
-                key = f'{prefix}text_content_{id(ytype)}'
+                key = f"{prefix}text_content_{id(ytype)}"
                 stack_item.meta[key] = ytype.to_string()
 
-    def _should_capture_transaction(self, transaction: 'Transaction') -> bool:
+    def _should_capture_transaction(self, transaction: "Transaction") -> bool:
         """Determine if a transaction should be captured for undo/redo."""
         # Check if transaction should be captured based on filter
         if not self.capture_transaction(transaction):
@@ -121,13 +129,18 @@ class UndoManager:
         origin = transaction.origin
         if origin is not None and origin not in self.tracked_origins:
             # Check if origin's constructor is tracked
-            if not any(tracked_origin == origin.__class__ for tracked_origin in self.tracked_origins 
-                       if hasattr(tracked_origin, '__class__') and hasattr(origin, '__class__')):
+            if not any(
+                tracked_origin == origin.__class__
+                for tracked_origin in self.tracked_origins
+                if hasattr(tracked_origin, "__class__") and hasattr(origin, "__class__")
+            ):
                 return False
 
         return True
 
-    def _capture_transaction_changes(self, transaction: 'Transaction', stack_item: StackItem) -> None:
+    def _capture_transaction_changes(
+        self, transaction: "Transaction", stack_item: StackItem
+    ) -> None:
         """Capture the changes made in a transaction."""
         # For now, we'll use a simplified approach that works with the current YDoc architecture
         # Instead of tracking Items directly, we'll track the text content changes
@@ -136,7 +149,7 @@ class UndoManager:
         for ytype in transaction.doc.share.values():
             if isinstance(ytype, YText):
                 # Store a snapshot of the current content
-                stack_item.meta[f'text_content_{id(ytype)}'] = ytype.to_string()
+                stack_item.meta[f"text_content_{id(ytype)}"] = ytype.to_string()
 
         # Also store deleted items for completeness
         for item_id in transaction.delete_set:
@@ -182,7 +195,8 @@ class UndoManager:
 
     def _apply_stack_item(self, stack_item: StackItem, is_undo: bool) -> None:
         """Apply a stack item (undo or redo)."""
-        def apply_changes(transaction: 'Transaction') -> None:
+
+        def apply_changes(transaction: "Transaction") -> None:
             # For now, we'll use a simplified approach that works with YText
             # In a full implementation, this would work with Items directly
 
@@ -190,11 +204,11 @@ class UndoManager:
             before_states = {}
             after_states = {}
             for key, value in stack_item.meta.items():
-                if key.startswith('before_text_content_'):
-                    ytype_id = int(key[len('before_text_content_'):])
+                if key.startswith("before_text_content_"):
+                    ytype_id = int(key[len("before_text_content_") :])
                     before_states[ytype_id] = value
-                elif key.startswith('after_text_content_'):
-                    ytype_id = int(key[len('after_text_content_'):])
+                elif key.startswith("after_text_content_"):
+                    ytype_id = int(key[len("after_text_content_") :])
                     after_states[ytype_id] = value
 
             # Apply changes to YText types
@@ -236,7 +250,7 @@ class UndoManager:
     def destroy(self) -> None:
         """Clean up the undo manager."""
         # Remove event handlers
-        if hasattr(self.doc, '_remove_after_transaction_handler'):
+        if hasattr(self.doc, "_remove_after_transaction_handler"):
             self.doc._remove_after_transaction_handler(self._after_transaction_handler)
 
 
@@ -245,17 +259,22 @@ def _add_undo_support_to_doc() -> None:
     """Monkey-patch Doc class to add undo manager support."""
     from .doc import Doc
 
-    def add_undo_manager(self, capture_timeout: float = 0.5, 
-                         capture_transaction: Callable[['Transaction'], bool] | None = None,
-                         tracked_origins: Set[Any] | None = None) -> 'UndoManager':
+    def add_undo_manager(
+        self,
+        capture_timeout: float = 0.5,
+        capture_transaction: Callable[["Transaction"], bool] | None = None,
+        tracked_origins: Set[Any] | None = None,
+    ) -> "UndoManager":
         """Add an undo manager to this document."""
-        undo_manager = UndoManager(self, capture_timeout, capture_transaction, tracked_origins)
+        undo_manager = UndoManager(
+            self, capture_timeout, capture_transaction, tracked_origins
+        )
         self._undo_manager = undo_manager
         return undo_manager
 
-    def get_undo_manager(self) -> 'UndoManager | None':
+    def get_undo_manager(self) -> "UndoManager | None":
         """Get the undo manager for this document."""
-        return getattr(self, '_undo_manager', None)
+        return getattr(self, "_undo_manager", None)
 
     def undo(self) -> bool:
         """Undo the last operation."""

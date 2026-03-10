@@ -2,7 +2,8 @@
 Full CRDT Demo - Demonstrating complete YDoc functionality
 """
 
-from ydoc import Doc, create_id, Item, transact
+from ydoc import Doc, create_id, Item
+
 
 def main():
     print("=== Full YDoc CRDT Demo ===")
@@ -36,7 +37,7 @@ def main():
     print("\n2. Bob creates content concurrently...")
 
     def bob_transaction(txn):
-        print(f"   Bob's transaction started")
+        print("   Bob's transaction started")
 
         # Bob creates his own item
         bob_id = create_id(bob_doc.client_id, 1)
@@ -87,7 +88,9 @@ def main():
 
     # Check if the item was deleted
     deleted_item = alice_doc.store.get_item(create_id(alice_doc.client_id, 1))
-    print(f"   Item deleted status: {deleted_item.deleted if deleted_item else 'Not found'}")
+    print(
+        f"   Item deleted status: {deleted_item.deleted if deleted_item else 'Not found'}"
+    )
     print(f"   Deletion set: {alice_doc.store.deleted_set}")
 
     print("\n5. Demonstrating nested transactions...")
@@ -109,14 +112,18 @@ def main():
     alice_doc.transact(outer_transaction, origin="outer")
 
     print("\n6. Final state summary...")
-    print(f"   Alice's document:")
-    print(f"     - Total items: {sum(len(items) for items in alice_doc.store.clients.values())}")
+    print("   Alice's document:")
+    print(
+        f"     - Total items: {sum(len(items) for items in alice_doc.store.clients.values())}"
+    )
     print(f"     - State vector: {alice_doc.store.get_state_vector()}")
     print(f"     - Deleted items: {len(alice_doc.store.deleted_set)}")
     print(f"     - Completed transactions: {len(alice_doc._transaction_cleanups)}")
 
-    print(f"   Bob's document:")
-    print(f"     - Total items: {sum(len(items) for items in bob_doc.store.clients.values())}")
+    print("   Bob's document:")
+    print(
+        f"     - Total items: {sum(len(items) for items in bob_doc.store.clients.values())}"
+    )
     print(f"     - State vector: {bob_doc.store.get_state_vector()}")
     print(f"     - Deleted items: {len(bob_doc.store.deleted_set)}")
     print(f"     - Completed transactions: {len(bob_doc._transaction_cleanups)}")
@@ -129,6 +136,7 @@ def main():
     print("  • Deletion tracking")
     print("  • Nested transactions")
     print("  • State vector management")
+
 
 if __name__ == "__main__":
     main()

@@ -5,7 +5,7 @@ This example demonstrates the event system that allows applications
 to react to changes in collaborative documents.
 """
 
-from ydoc import Doc, YText, YMap, YEvent
+from ydoc import Doc, YEvent
 
 
 def demo_basic_events():
@@ -28,8 +28,8 @@ def demo_basic_events():
         print(f"Document change detected on: {event.target}")
 
     # Register listeners
-    text.on('change', handle_text_change)
-    doc.on('change', handle_doc_change)
+    text.on("change", handle_text_change)
+    doc.on("change", handle_doc_change)
 
     # Make some changes
     print("Making changes...")
@@ -37,8 +37,8 @@ def demo_basic_events():
     text.insert(5, " World")
 
     # Clean up
-    text.off('change', handle_text_change)
-    doc.off('change', handle_doc_change)
+    text.off("change", handle_text_change)
+    doc.off("change", handle_doc_change)
     print()
 
 
@@ -51,17 +51,17 @@ def demo_ymap_events():
 
     def handle_map_change(event: YEvent) -> None:
         print(f"Map changed! Keys: {event.keys_changed}")
-        if 'name' in event.keys_changed:
+        if "name" in event.keys_changed:
             print(f"  Name is now: {map_type.get('name')}")
 
-    map_type.on('change', handle_map_change)
+    map_type.on("change", handle_map_change)
 
     # Make changes
     map_type.set("name", "Alice")
     map_type.set("age", 30)
     map_type.delete("name")
 
-    map_type.off('change', handle_map_change)
+    map_type.off("change", handle_map_change)
     print()
 
 
@@ -77,14 +77,14 @@ def demo_transaction_events():
         print(f"  Delete set size: {len(transaction.delete_set)}")
         print(f"  Changed types: {len(transaction.changed)}")
 
-    doc.on('afterTransaction', handle_after_transaction)
+    doc.on("afterTransaction", handle_after_transaction)
 
     # Make changes with different origins
     text.insert(0, "User edit", origin="user")
     text.insert(10, " System edit", origin="system")
     text.insert(21, " Default origin")
 
-    doc.off('afterTransaction', handle_after_transaction)
+    doc.off("afterTransaction", handle_after_transaction)
     print()
 
 
@@ -99,7 +99,7 @@ def demo_event_patterns():
     def handle_once(event: YEvent) -> None:
         print("One-time event triggered!")
 
-    text.once('change', handle_once)
+    text.once("change", handle_once)
 
     # This will trigger the one-time listener
     text.insert(0, "First change")
@@ -111,21 +111,24 @@ def demo_event_patterns():
     print(f"Text has change listeners: {text.has_listeners('change')}")
 
     # Add multiple listeners
-    def listener1(event: YEvent): print("Listener 1")
-    def listener2(event: YEvent): print("Listener 2")
+    def listener1(event: YEvent):
+        print("Listener 1")
 
-    text.on('change', listener1)
-    text.on('change', listener2)
+    def listener2(event: YEvent):
+        print("Listener 2")
+
+    text.on("change", listener1)
+    text.on("change", listener2)
 
     text.insert(20, " Third")  # Should trigger both
 
     # Remove specific listener
-    text.off('change', listener1)
+    text.off("change", listener1)
     text.insert(27, " Fourth")  # Should only trigger listener2
 
     # Remove all listeners
-    text.remove_all_listeners('change')
-    text.insert(35, " Fifth")   # Should not trigger any
+    text.remove_all_listeners("change")
+    text.insert(35, " Fifth")  # Should not trigger any
 
     print()
 
@@ -145,15 +148,17 @@ def demo_practical_usage():
     change_history = []
 
     def log_change(event: YEvent) -> None:
-        change_history.append({
-            'timestamp': 'now',
-            'content': event.target.to_string(),
-            'type': type(event.target).__name__,
-            'child_list_changed': event.child_list_changed
-        })
+        change_history.append(
+            {
+                "timestamp": "now",
+                "content": event.target.to_string(),
+                "type": type(event.target).__name__,
+                "child_list_changed": event.child_list_changed,
+            }
+        )
         print(f"Logged change: '{event.target.to_string()}'")
 
-    text.on('change', log_change)
+    text.on("change", log_change)
 
     # Simulate user typing
     sentences = ["The quick brown fox", " jumps over the", " lazy dog."]
@@ -164,7 +169,7 @@ def demo_practical_usage():
     print(f"Final content: '{text}'")
 
     # Clean up
-    text.off('change', log_change)
+    text.off("change", log_change)
     print()
 
 
@@ -177,17 +182,17 @@ def demo_delta_computation():
 
     def handle_change_with_delta(event: YEvent) -> None:
         delta = event.delta
-        print(f"Change detected:")
+        print("Change detected:")
         print(f"  Content: '{delta.get('content', '')}'")
         print(f"  Child list changed: {delta.get('child_list_changed', False)}")
         print(f"  Keys changed: {delta.get('keys_changed', [])}")
 
-    text.on('change', handle_change_with_delta)
+    text.on("change", handle_change_with_delta)
 
     # Make a change
     text.insert(0, "Delta test")
 
-    text.off('change', handle_change_with_delta)
+    text.off("change", handle_change_with_delta)
     print()
 
 

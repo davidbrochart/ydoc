@@ -3,7 +3,6 @@ Comprehensive tests for YDoc encoding/decoding functionality.
 Ported from Yjs test concepts to ensure compatibility.
 """
 
-import pytest
 from ydoc.encoding import Encoder, Decoder
 from ydoc.update_encoder import UpdateEncoderV1, UpdateEncoderV2
 from ydoc.update_decoder import UpdateDecoderV1, UpdateDecoderV2
@@ -39,7 +38,7 @@ def test_update_encoder_v1_basic():
     encoder.write_right_id(ID(2, 3))
     encoder.write_parent_info(True)
     encoder.write_info(42)  # info should be an integer
-    encoder.write_string('test string')
+    encoder.write_string("test string")
 
     # Get the encoded update
     update = encoder.to_bytes()
@@ -63,7 +62,7 @@ def test_update_encoder_v2_basic():
     encoder.write_right_id(ID(2, 3))
     encoder.write_parent_info(True)
     encoder.write_info(42)  # info should be an integer
-    encoder.write_string('test string')
+    encoder.write_string("test string")
 
     # Get the encoded update
     update = encoder.to_bytes()
@@ -82,7 +81,7 @@ def test_encoding_decoding_roundtrip():
     encoder_v1 = UpdateEncoderV1()
     encoder_v1.write_client(42)
     encoder_v1.write_len(100)
-    encoder_v1.write_string('Hello World')
+    encoder_v1.write_string("Hello World")
 
     encoded_v1 = encoder_v1.to_bytes()
     decoder_v1 = Decoder(encoded_v1)
@@ -90,13 +89,13 @@ def test_encoding_decoding_roundtrip():
 
     assert update_decoder_v1.read_client() == 42
     assert update_decoder_v1.read_len() == 100
-    assert update_decoder_v1.read_string() == 'Hello World'
+    assert update_decoder_v1.read_string() == "Hello World"
 
     # Test with V2
     encoder_v2 = UpdateEncoderV2()
     encoder_v2.write_client(42)
     encoder_v2.write_len(100)
-    encoder_v2.write_string('Hello World')
+    encoder_v2.write_string("Hello World")
 
     encoded_v2 = encoder_v2.to_bytes()
     decoder_v2 = Decoder(encoded_v2)
@@ -104,7 +103,7 @@ def test_encoding_decoding_roundtrip():
 
     assert update_decoder_v2.read_client() == 42
     assert update_decoder_v2.read_len() == 100
-    assert update_decoder_v2.read_string() == 'Hello World'
+    assert update_decoder_v2.read_string() == "Hello World"
 
 
 def test_var_uint_encoding():
@@ -123,7 +122,9 @@ def test_var_uint_encoding():
     decoder = Decoder(encoded)
     for expected in boundary_values:
         result = decoder.read_var_uint()
-        assert result == expected, f"VarUInt encoding failed for {expected}, got {result}"
+        assert result == expected, (
+            f"VarUInt encoding failed for {expected}, got {result}"
+        )
 
 
 def test_update_structure_encoding():
@@ -139,7 +140,7 @@ def test_update_structure_encoding():
     encoder.write_right_id(ID(1, 2))
     encoder.write_parent_info(False)
     encoder.write_info(1)  # insert operation
-    encoder.write_string('test content')
+    encoder.write_string("test content")
 
     # Write another operation
     encoder.write_left_id(ID(2, 1))
@@ -183,7 +184,7 @@ def test_version_compatibility():
     for encoder in [encoder_v1, encoder_v2]:
         encoder.write_client(1)
         encoder.write_len(10)
-        encoder.write_string('test')
+        encoder.write_string("test")
 
     update_v1 = encoder_v1.to_bytes()
     update_v2 = encoder_v2.to_bytes()
@@ -209,7 +210,7 @@ def test_large_update_encoding():
     for i in range(100):
         encoder.write_client(i % 10)
         encoder.write_len(i)
-        encoder.write_string(f'operation_{i}')
+        encoder.write_string(f"operation_{i}")
 
     update = encoder.to_bytes()
 
@@ -219,7 +220,7 @@ def test_large_update_encoding():
     for i in range(100):
         assert update_decoder.read_client() == i % 10
         assert update_decoder.read_len() == i
-        assert update_decoder.read_string() == f'operation_{i}'
+        assert update_decoder.read_string() == f"operation_{i}"
 
 
 def test_encoder_buffer_management():

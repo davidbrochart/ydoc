@@ -2,8 +2,7 @@
 YEvent implementation for YDoc - represents changes on YTypes.
 """
 
-from typing import Set, Any, Dict, List
-from .id import ID
+from typing import Set, Any, Dict
 
 
 class YEvent:
@@ -11,7 +10,9 @@ class YEvent:
     YEvent describes the changes on a YType.
     """
 
-    def __init__(self, target: 'YType', transaction: 'Transaction', subs: Set[Any] | None = None):
+    def __init__(
+        self, target: "YType", transaction: "Transaction", subs: Set[Any] | None = None
+    ):
         """
         Initialize a YEvent.
 
@@ -39,7 +40,7 @@ class YEvent:
         self._delta = None
         self._delta_deep = None
 
-    def deletes(self, struct: 'AbstractStruct') -> bool:
+    def deletes(self, struct: "AbstractStruct") -> bool:
         """
         Check if a struct is deleted by this event.
 
@@ -51,7 +52,7 @@ class YEvent:
         """
         return struct.id in self.transaction.delete_set
 
-    def adds(self, struct: 'AbstractStruct') -> bool:
+    def adds(self, struct: "AbstractStruct") -> bool:
         """
         Check if a struct is added by this event.
 
@@ -85,15 +86,15 @@ class YEvent:
         Simplified version - full implementation would use proper delta format.
         """
         delta = {
-            'target': str(self.target),
-            'child_list_changed': self.child_list_changed,
-            'keys_changed': list(self.keys_changed),
-            'transaction': str(self.transaction)
+            "target": str(self.target),
+            "child_list_changed": self.child_list_changed,
+            "keys_changed": list(self.keys_changed),
+            "transaction": str(self.transaction),
         }
 
         # For YText, include content changes
-        if hasattr(self.target, '_content'):
-            delta['content'] = self.target.to_string()
+        if hasattr(self.target, "_content"):
+            delta["content"] = self.target.to_string()
 
         return delta
 

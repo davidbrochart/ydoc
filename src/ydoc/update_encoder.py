@@ -2,7 +2,7 @@
 UpdateEncoder implementation for YDoc - binary encoding of updates
 """
 
-from typing import Dict, List, Any
+from typing import Dict, Any
 from .encoding import Encoder, write_var_uint, write_uint8
 from .id import ID
 
@@ -54,6 +54,7 @@ class UpdateEncoderV1:
     def write_any(self, value: Any) -> None:
         """Write any value."""
         from .encoding import write_any
+
         write_any(self.rest_encoder, value)
 
     def write_buf(self, buf: bytes) -> None:
@@ -127,6 +128,7 @@ class UpdateEncoderV2:
     def write_any(self, value: Any) -> None:
         """Write any value."""
         from .encoding import write_any
+
         write_any(self.rest_encoder, value)
 
     def write_buf(self, buf: bytes) -> None:

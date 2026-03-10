@@ -3,10 +3,8 @@ Focused UndoManager tests inspired by Yjs patterns.
 Tests that work with current YDoc API and improve coverage.
 """
 
-import pytest
 from ydoc.doc import Doc
-from ydoc.types import YText, YMap, YArray
-from ydoc.undo_manager import UndoManager, StackItem
+from ydoc.undo_manager import StackItem
 
 
 def test_undo_manager_initialization():
@@ -29,10 +27,10 @@ def test_undo_manager_stack_item_structure():
     stack_item = StackItem()
 
     # Verify structure
-    assert hasattr(stack_item, 'inserted_items')
-    assert hasattr(stack_item, 'deleted_items')
-    assert hasattr(stack_item, 'meta')
-    assert hasattr(stack_item, 'timestamp')
+    assert hasattr(stack_item, "inserted_items")
+    assert hasattr(stack_item, "deleted_items")
+    assert hasattr(stack_item, "meta")
+    assert hasattr(stack_item, "timestamp")
 
     assert isinstance(stack_item.inserted_items, list)
     assert isinstance(stack_item.deleted_items, list)
@@ -41,6 +39,7 @@ def test_undo_manager_stack_item_structure():
 
     # Verify timestamp is reasonable
     import time
+
     current_time = time.time()
     assert abs(current_time - stack_item.timestamp) < 1.0
 
@@ -77,8 +76,8 @@ def test_undo_manager_capture_timeout_options():
     assert undo_manager2.capture_timeout == 10.0
 
     # Test with infinite timeout
-    undo_manager3 = doc.add_undo_manager(capture_timeout=float('inf'))
-    assert undo_manager3.capture_timeout == float('inf')
+    undo_manager3 = doc.add_undo_manager(capture_timeout=float("inf"))
+    assert undo_manager3.capture_timeout == float("inf")
 
 
 def test_undo_manager_custom_capture_function():
@@ -236,8 +235,8 @@ def test_undo_manager_with_complex_operations():
     # Check stack item structure
     for stack_item in undo_manager.undo_stack:
         assert isinstance(stack_item, StackItem)
-        assert hasattr(stack_item, 'inserted_items')
-        assert hasattr(stack_item, 'deleted_items')
+        assert hasattr(stack_item, "inserted_items")
+        assert hasattr(stack_item, "deleted_items")
 
 
 def test_undo_manager_error_handling():

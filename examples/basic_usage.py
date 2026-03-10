@@ -4,6 +4,7 @@ Basic usage example for YDoc
 
 from ydoc import Doc, create_id
 
+
 def main():
     print("=== YDoc Basic Usage Example ===")
 
@@ -34,6 +35,7 @@ def main():
     # Clean up
     doc.destroy()
     print("Document destroyed")
+
 
 if __name__ == "__main__":
     main()

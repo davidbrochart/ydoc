@@ -4,6 +4,7 @@ CRDT Demo - Demonstrating the core conflict resolution functionality
 
 from ydoc import Doc, StructStore, Item, create_id
 
+
 def main():
     print("=== YDoc CRDT Demo ===")
 
@@ -34,8 +35,12 @@ def main():
     item2_2 = Item(id=id2_2, content=["CRDT"])
     store.add_struct(item2_2)
 
-    print(f"   Client 1 items: {[(item.id.client, item.id.clock) for item in store.clients[client1_id]]}")
-    print(f"   Client 2 items: {[(item.id.client, item.id.clock) for item in store.clients[client2_id]]}")
+    print(
+        f"   Client 1 items: {[(item.id.client, item.id.clock) for item in store.clients[client1_id]]}"
+    )
+    print(
+        f"   Client 2 items: {[(item.id.client, item.id.clock) for item in store.clients[client2_id]]}"
+    )
 
     print("\n2. Current state vector:")
     state_vector = store.get_state_vector()
@@ -89,6 +94,7 @@ def main():
 
     print("\n✅ CRDT Demo completed successfully!")
     print("This demonstrates the foundation for conflict-free replicated data types.")
+
 
 if __name__ == "__main__":
     main()
